@@ -11,7 +11,8 @@ Asteroid
 
 Asteroid edges are represented as an array of vectors. The sum of those vectors must be 0.
 All asteroids have 12 edges; when an asteroid is split, the edge that splits must be made up
-of 6 vectors.
+of 6 vectors. A center and a radius must be defined; the center _must_ be inside the asteroid,
+and the radius should be the largest distance from the center to a vertex.
 
 Player
 ------
@@ -27,8 +28,24 @@ Purely graphical particles are managed by an opaque particle manager. The data d
 - Velocity vector of particle (pixels per frame)
 - Start position vector of particle
 - Frame created
-- Color
-- Width
+//- Color
+//- Width
+
+The particle manager stores the particles as a fixed size array. This is because we do not want to allocate
+memory every time we create a particle. When we add a particle to the particle manager, we need to iterate
+through the array to find a particle that is not alive and then replace it, otherwise we replace the oldest
+particle. i.e.
+
+Particle* get_unused_particle(Particle* particles, uint particlen) {
+  Particle* oldest = particles;
+  for(p = particles; (p - particles) < particlen; p++) {
+    if (p->dead)
+     return p;
+    if (p->created < oldest->created)
+     oldest = p;
+  }
+  return p;
+}
 
 Bullets
 -------
@@ -37,6 +54,11 @@ Similarly to Particles, Bullets are defined as
 
 - Velocity (Potentially const?)
 - Current position
+- Frame created
+
+They have a constant life, inherit the ship velocity. They are stored in a manner simmilar to the particles.
+Due to the fact that they have a constant life, and a constant maximum rate of fire, we can calculate the maximum
+number of particles, which allows us to safely use a fixed sized array.
 
 Collision Detection
 -------------------
@@ -45,7 +67,51 @@ Potential collisions:
 
 - Ship & Asteroid
 - Asteroid & Bullet
-- Asteroid & Asteroid
 
-Investigate algorithms to detect collisions between arbitrary polygons and points.
+To speed up collision detection, we can treat asteroids as circles, and then
+look for collisions with those. For every circle that collides, we can then do
+fine grained collision detection. Fine grained collision detection is done by
+spliting the polygon into triangles, and then checking for collisions in those
+triangles.
 
+// Returns the first node of the AsteroidList that has the point inside it
+AsteroidNode* point_in_asteroids(Vector point, AsteroidList asteroids) {
+  AsteroidNode* head, tail, asteroid;
+  head = asteroids.head;
+  tail = asteroids.tail;
+  for(asteroid = head; asteroid != tail; asteroid = asteroid->next) {
+    if(in_asteroid(point, asteroid->value))
+      return asteroid;
+  }
+  return NULL;
+}
+
+// Returns true if the point is inside the asteroid
+bool in_asteroid(Vector point, Asteroid asteroid) {
+  Vector center = asteroid.center;
+  int radius = asteroid.radius;
+  // If we're not in the vauge area
+  if (!(magnitude_squared(vec_sub(point, center)) < radius * radius)) {
+    return false;
+  }
+  Vector* a, b;
+  for(a = asteroid.vertices; vec_sub(a, asteroid.vertices) < VERTEXN; a++) {
+    // Get the next vertex in the loop (but we need to wrap around)
+    b = (a - asteroid.vertices == VERTEXN - 1) ? asteroid.vertices : (a + 1));
+    if (in_triangle(point, *a, *b, center))
+      return true;
+  }
+  return false;
+}
+
+// Returns true if the point is inside the triangel a b c
+bool in_triangle(Vector point, Vector a, Vector b, Vector c) {
+  return same_side(point, a, b, c) && same_side(point, b, a, c) && same_side(point, c, a, b);
+}
+
+// Returns true if point1 and point2 are both on the same side of the line a b
+bool same_side(Vector point1, Vector point2, Vector a, Vector b) {
+  return dot_product(
+    cross_product(vec_sub(b, a), vec_sub(point1, a)),
+    cross_product(vec_sub(b, a), vec_sub(point2, a)));
+}
