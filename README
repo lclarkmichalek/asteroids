@@ -1,0 +1,51 @@
+Asteroids Game
+==============
+
+Implementing lab 3 of chapter 12 of Head First C.
+
+Implementation
+==============
+
+Asteroid
+--------
+
+Asteroid edges are represented as an array of vectors. The sum of those vectors must be 0.
+All asteroids have 12 edges; when an asteroid is split, the edge that splits must be made up
+of 6 vectors.
+
+Player
+------
+
+The player is represented by two vectors; a position vector and a direction vector.
+
+Particles
+---------
+
+Purely graphical particles are managed by an opaque particle manager. The data defining the particles are:
+
+- Lifetime of particle (frames, given 60 frames per second
+- Velocity vector of particle (pixels per frame)
+- Start position vector of particle
+- Frame created
+- Color
+- Width
+
+Bullets
+-------
+
+Similarly to Particles, Bullets are defined as 
+
+- Velocity (Potentially const?)
+- Current position
+
+Collision Detection
+-------------------
+
+Potential collisions:
+
+- Ship & Asteroid
+- Asteroid & Bullet
+- Asteroid & Asteroid
+
+Investigate algorithms to detect collisions between arbitrary polygons and points.
+
