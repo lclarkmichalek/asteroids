@@ -3,6 +3,13 @@
 #include "./particles.h"
 #include "./vector.h"
 
+bool is_alive(Particle p, ParticleManager* pm) {
+    if (p.created + p.lifetime < pm->current_frame)
+        return false;
+    else
+        return true;
+}
+
 ParticleManager* new_particle_manager() {
     ParticleManager* pm = malloc(sizeof(ParticleManager));
     pm->current_frame = 0;

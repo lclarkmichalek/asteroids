@@ -72,36 +72,70 @@ void delete_asteroid_node(AsteroidNode* n) {
     free(n);
 }
 
-AsteroidList new_asteroid_list() {
-    AsteroidList a;
-    a.head = (AsteroidNode*)NULL;
-    a.tail = (AsteroidNode*)NULL;
-    return a;
-}
-
-void delete_asteroid_list(AsteroidList al) {
-    AsteroidNode* n;
-    for(n = al.head; n != al.tail; n = n->next) {
+void delete_asteroid_list(AsteroidNode* n) {
+    for(; n != NULL; n = n->next) {
         delete_asteroid_node(n);
     }
 }
 
-void append_asteroid_list(AsteroidList* al, AsteroidNode* n) {
-    n->prev = al->tail;
-    n->next = NULL;
-    al->tail->next = n;
-    al->tail = n;
-    if (al->head == NULL) {
-        al->head = n;
+void preappend_asteroid_list(AsteroidNode* al, AsteroidNode* n) {
+    n->next = al;
+    n->prev = NULL;
+    al->prev = n;
+}
+
+AsteroidNode* point_collides(AsteroidNode* asteroids, Vector point) {
+    AsteroidNode *node = asteroids;
+    for(; node != NULL; node = node->next) {
+        if (point_in_asteroid(point, node->value)) {
+            return node;
+        }
+    }
+    return NULL;
+}
+
+void update_asteroids(AsteroidNode* asteroids) {
+    AsteroidNode *node;
+    for(node = asteroids;
+        node != NULL;
+        node = node->next) {
+        node->value->center = vec_add(node->value->center,
+                                      node->value->direction);
+        node->value->angle += ASTEROID_ROTATION_SPEED;
     }
 }
 
-void preappend_asteroid_list(AsteroidList* al, AsteroidNode* n) {
-    n->next = al->head;
-    n->prev = NULL;
-    al->head->prev = n;
-    al->head = n;
-    if (al->tail == NULL) {
-        al->tail = n;
+void split_asteroid(AsteroidNode* asteroid) {
+    AsteroidNode *child1, *child2;
+    child1 = malloc(sizeof(AsteroidNode));
+    child1->value = malloc(sizeof(Asteroid));
+    child2 = malloc(sizeof(AsteroidNode));
+    child2->value = malloc(sizeof(Asteroid));
+
+    Vector* vertex;
+    for(vertex = asteroid->value->verticies;
+        vertex - asteroid->value->verticies < VERTEXN;
+        vertex++) {
+        *vertex = vec_mul(*vertex, 0.5);
     }
+
+    Vector direction1, direction2;
+    // D1 = D0 + (0, 1)
+    direction1 = vec_mul(asteroid->value->direction, 1.5);
+    direction2 = vec_mul(asteroid->value->direction, 0.5);
+
+    *child1->value = new_asteroid(asteroid->value->center,
+                                  asteroid->value->verticies,
+                                  direction1);
+    *child2->value = new_asteroid(asteroid->value->center,
+                                  asteroid->value->verticies,
+                                  direction2);
+
+    child1->prev = asteroid->prev;
+    child1->next = child2;
+    child2->prev = child1;
+    child2->next = asteroid->next;
+    asteroid->prev->next = child1;
+    asteroid->next->prev = child2;
+    free(asteroid);
 }

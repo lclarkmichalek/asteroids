@@ -1,10 +1,11 @@
 #ifndef _PARTICLES_H
 #define _PARTICLES_H
 
+#include <stdbool.h>
+
 #include "./vector.h"
 
 #define PARTICLEN 256
-
 typedef struct Particle {
     // The position of the particle
     Vector position;
@@ -32,5 +33,8 @@ void delete_particle_manager(ParticleManager*);
 void update_particle_manager(ParticleManager*);
 // Adds a particle to the particle manager with the given position, direction and lifetime
 void add_particle(ParticleManager*, Vector, Vector, uint);
+
+// Returns true if the particle is alive
+bool is_alive(Particle, ParticleManager*);
 
 #endif

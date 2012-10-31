@@ -11,7 +11,7 @@
 
 Game* new_game(Vector size) {
     Game *game = malloc(sizeof(Game));
-    game->asteroids = new_asteroid_list();
+    game->asteroids = NULL;
     game->particlemanager = new_particle_manager();
     game->bulletmanager = new_bullet_manager();
     game->ship = new_ship(vec_mul(size, 0.5), new_vector());
@@ -29,22 +29,24 @@ void delete_game(Game *g) {
     free(g);
 }
 
-AsteroidNode* point_collides(Game *g, Vector point) {
-    AsteroidNode *node;
-    for(node = g->asteroids.head;
-        node != g->asteroids.tail;
-        node = node->next) {
-        if (point_in_asteroid(point, node->value)) {
-            return node;
-        }
-    }
-    return NULL;
-}
-
 void rotate_ship_left(Game *game) {
     game->ship.angle -= SHIP_ROTATION_SPEED;
 }
 
 void rotate_ship_right(Game *game) {
     game->ship.angle += SHIP_ROTATION_SPEED;
+}
+
+void update_game(Game *game) {
+    update_asteroids(game->asteroids);
+    update_particle_manager(game->particlemanager);
+    update_bullet_manager(game->bulletmanager);
+    game->ship.position = vec_add(game->ship.position, game->ship.velocity);
+
+    AsteroidNode* hit = bullet_hit(game->bulletmanager, game->asteroids);
+    if (hit != NULL)
+        split_asteroid(hit);
+
+    if (point_collides(game->asteroids, game->ship.position) != NULL)
+        game->lives--;
 }

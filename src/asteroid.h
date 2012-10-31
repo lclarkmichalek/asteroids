@@ -1,9 +1,12 @@
 #ifndef _ASTEROID_H
 #define _ASTEROID_H
 
+#include <stdbool.h>
+
 #include "./vector.h"
 
 #define VERTEXN 12
+#define ASTEROID_ROTATION_SPEED 0.05
 
 typedef struct Asteroid {
     // The position vectors of the verticies, relative to the center
@@ -38,18 +41,17 @@ typedef struct AsteroidNode AsteroidNode;
 // Frees the memory used by the AsteroidNode. Also calls delete_asteroid on the linked asteroid
 void delete_asteroid_node(AsteroidNode*);
 
-typedef struct AsteroidList {
-    AsteroidNode* head;
-    AsteroidNode*tail;
-} AsteroidList;
-
-// Creates a new empty AsteroidList
-AsteroidList new_asteroid_list();
-// Calls delete_asteroid_node on each element of the AsteroidList
-void delete_asteroid_list(AsteroidList);
-// Adds an asteroid to the beginning of the list
-void append_asteroid_list(AsteroidList*, AsteroidNode*);
+// Calls delete_asteroid_node on each element of the Asteroid list
+void delete_asteroid_list(AsteroidNode*);
 // Adds an asteroid to the front of the list
-void prepend_asteroid_list(AsteroidList*, AsteroidNode*);
+void prepend_asteroid_list(AsteroidNode*, AsteroidNode*);
+// Returns an AsteroidNode if the point is inside any asteroid in the
+// game. Returns NULL if there is no collision
+AsteroidNode* point_collides(AsteroidNode*, Vector);
+// Updates the positions of the asteroids for one frame
+void update_asteroids(AsteroidNode*);
+// Splits an asteroid in two, removes it from the list, and adds the
+// new ones to the list
+void split_asteroid(AsteroidNode*);
 
 #endif

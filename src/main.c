@@ -72,8 +72,6 @@ int main() {
                 break;
             }
 
-            draw_game(game);
-
             al_flip_display();
         }
     }
