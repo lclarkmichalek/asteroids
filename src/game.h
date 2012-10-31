@@ -47,4 +47,6 @@ void rotate_ship_right(Game*);
 // Updates the gamestate for a single frame
 void update_game(Game*);
 
+void draw_game(Game*);
+
 #endif

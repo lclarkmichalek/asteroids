@@ -30,6 +30,8 @@ AsteroidNode* bullet_hit(BulletManager* bm, AsteroidNode* asteroids) {
             AsteroidNode* node = point_collides(asteroids, bullet->position);
             if (node)
                 return node;
+            // Then kill the bullet
+            bullet->lifetime = 0;
         }
     }
     return NULL;

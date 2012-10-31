@@ -1,13 +1,15 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "./game.h"
+#include <allegro5/allegro.h>
 
 #include "./asteroid.h"
 #include "./particles.h"
 #include "./bullets.h"
 #include "./ship.h"
 #include "./vector.h"
+
+#include "./game.h"
 
 Game* new_game(Vector size) {
     Game *game = malloc(sizeof(Game));
@@ -49,4 +51,8 @@ void update_game(Game *game) {
 
     if (point_collides(game->asteroids, game->ship.position) != NULL)
         game->lives--;
+}
+
+void draw_game(Game *game) {
+    al_clear_to_color(al_map_rgb(0, 0, 0));
 }

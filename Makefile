@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-c -Wall -Wextra -pedantic -std=c99 -g
+CFLAGS=-c -Wall -Wextra -Werror -pedantic -std=c99 -g
 LDFLAGS=-lallegro
 SOURCES= \
 	src/vector.c src/particles.c src/asteroid.c \
