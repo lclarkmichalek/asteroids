@@ -44,7 +44,7 @@ bool in_triangle(Vector point, Vector a, Vector b, Vector c) {
 
 bool point_in_asteroid(Vector p, Asteroid* asteroid) {
     if (magnitude_squared(vec_sub(p, asteroid->center)) >
-            asteroid->radius_squared) {
+        asteroid->radius_squared) {
         return false;
     }
 
@@ -81,7 +81,7 @@ AsteroidList new_asteroid_list() {
 
 void delete_asteroid_list(AsteroidList al) {
     AsteroidNode* n;
-    for(n = al.head; n->next != NULL; n = n->next) {
+    for(n = al.head; n != al.tail; n = n->next) {
         delete_asteroid_node(n);
     }
 }
