@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-c -Wall -Wextra
+CFLAGS=-c -Wall -Wextra -g
 LDFLAGS=-lallegro
 SOURCES= \
 	src/vector.c src/particles.c src/asteroid.c \
@@ -19,3 +19,7 @@ $(EXECUTABLE): $(OBJECTS)
 
 format:
 	astyle --style=java $(HEADERS) $(SOURCES)
+
+clean:
+	rm ./asteroids
+	rm src/*.o
