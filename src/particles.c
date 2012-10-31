@@ -15,6 +15,7 @@ ParticleManager* new_particle_manager() {
     particle->lifetime = 0;
     particle->created = 0;
   }
+  return pm;
 }
 
 void delete_particle_manager(ParticleManager* pm) {
@@ -36,13 +37,14 @@ void update_particle_manager(ParticleManager* pm) {
 // in the particle manager
 Particle* find_dead_particle(ParticleManager* pm) {
   Particle* oldest = NULL;
+  Particle* particle;
   for(particle = pm->particles;
       (particle - pm->particles) < PARTICLEN;
       particle++) {
     if (pm->current_frame - particle->created >= particle->lifetime)
       return particle;
     if (oldest == NULL || particle->created < oldest->created)
-      oldest = particle
+      oldest = particle;
   }
   return oldest;
 }
