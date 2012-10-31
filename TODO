@@ -1,0 +1,27 @@
+
+- Graphics
+  - Drawing game objects
+    - Asteroids
+    - Ship
+    - Bullets
+    - Particles
+  - HUD
+    - Score
+    - Lives
+- Gameplay
+  - User input
+    - Ship control
+      - Up, Down, Accelerate, Decelerate
+    - Game control
+      - Escape, Window closed
+  - Clock tick
+    - Update game
+      - Move asteroids
+      - Move bullets
+      - Move player
+      - Check collisions
+        - Delete and create asteroids and bullets as needed
+      - Move particles
+    - Draw game
+    - Flip surface
+    - Check game is still running
