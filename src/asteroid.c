@@ -6,24 +6,55 @@
 
 Asteroid new_asteroid(Vector pos, Vector verts[VERTEXN], Vector dir) {
   Asteroid a;
-  a.center = pos;
+  a.center = vec_add(pos, verts[VERTEXN/2]);
   memcpy(a.verticies, verts, sizeof(Vector[VERTEXN]));
 
-  Vector* vert
+  Vector *vert;
   uint largest_mg2 = 0;
-  for(vert = a.verticies; vert - a.verticies < VERTEXN; vert++) {
-    uint mag = magnitude_squared(*vert);
+  for(vert = a.verticies; (uint)(vert - a.verticies) < VERTEXN; vert++) {
+      uint mag = magnitude_squared(vec_sub(*vert, a.center));
     if (mag > largest_mg2)
       largest_mg2 = mag;
   }
   a.radius_squared = largest_mg2;
-  
+
   a.direction = dir;
   a.angle = 0;
+  return a;
 }
 
 void delete_asteroid(Asteroid* a) {
   free(a);
+}
+
+// Returns true if point1 and point2 are both on the same side of the line a b
+bool same_side(Vector point1, Vector point2, Vector a, Vector b) {
+  return dot_product(
+    cross_product(vec_sub(b, a), vec_sub(point1, a)),
+    cross_product(vec_sub(b, a), vec_sub(point2, a)));
+}
+
+// Returns true if the point is inside the triangel a b c
+bool in_triangle(Vector point, Vector a, Vector b, Vector c) {
+  return same_side(point, a, b, c) && same_side(point, b, a, c) &&
+      same_side(point, c, a, b);
+}
+
+bool point_in_asteroid(Vector p, Asteroid* asteroid) {
+  if (magnitude_squared(vec_sub(p, asteroid->center)) >
+      asteroid->radius_squared)
+    return false;
+
+  Vector *a, *b;
+  b = asteroid->verticies + VERTEXN - 1; // last element
+  a = asteroid->verticies;
+  while(a - asteroid->verticies < VERTEXN) {
+    if (in_triangle(p, *a, *b, asteroid->center))
+      return true;
+    b = a;
+    a++;
+  }
+  return false;
 }
 
 void delete_asteroid_node(AsteroidNode* n) {

@@ -25,6 +25,8 @@ typedef struct Asteroid {
 Asteroid new_asteroid(Vector pos, Vector[VERTEXN], Vector);
 // Frees the memory used by the Asteroid.
 void delete_asteroid(Asteroid*);
+// Does collision detection on an asteroid
+bool point_in_asteroid(Vector, Asteroid*);
 
 typedef struct AsteroidNode {
   AsteroidNode* prev, next;
