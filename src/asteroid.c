@@ -44,7 +44,7 @@ bool in_triangle(Vector point, Vector a, Vector b, Vector c) {
 
 bool point_in_asteroid(Vector p, Asteroid* asteroid) {
     if (magnitude_squared(vec_sub(p, asteroid->center)) >
-        asteroid->radius_squared) {
+            asteroid->radius_squared) {
         return false;
     }
 
