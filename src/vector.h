@@ -1,8 +1,10 @@
 #ifndef _VECTOR_H
 #define _VECTOR_H
 
+typedef unsigned int uint;
+
 typedef struct Vector {
-  int x, y, z;
+    int x, y, z;
 } Vector;
 
 // Creates a new vector
@@ -11,6 +13,8 @@ Vector new_vector();
 Vector vec_add(Vector, Vector);
 // Subtracts a vector from another
 Vector vec_sub(Vector, Vector);
+// Multiplies the vector by a scalar
+Vector vec_mul(Vector, float);
 // Calculates the magnitude squared
 uint magnitude_squared(Vector);
 // Calculate the cross product

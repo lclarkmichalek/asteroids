@@ -3,24 +3,24 @@
 
 #include "./vector.h"
 
-static const int PARTICLEN = 256;
+#define PARTICLEN 256
 
 typedef struct Particle {
-  // The position of the particle
-  Vector position;
-  // The direction of the paricle
-  Vector velocity;
+    // The position of the particle
+    Vector position;
+    // The direction of the particle
+    Vector velocity;
 
-  // How many frames the particle lives for
-  uint lifetime;
-  // The frame that the particle was created
-  uint created;
+    // How many frames the particle lives for
+    uint lifetime;
+    // The frame that the particle was created
+    uint created;
 } Particle;
 
 typedef struct ParticleManager {
-  Particle particles[PARTICLEN];
-  
-  uint current_frame;
+    Particle particles[PARTICLEN];
+
+    uint current_frame;
 } ParticleManager;
 
 // Creates a new ParticleManager
