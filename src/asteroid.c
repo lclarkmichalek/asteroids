@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "./asteroid.h"
 #include "./vector.h"
@@ -68,15 +69,16 @@ void delete_asteroid_node(AsteroidNode* n) {
 
 AsteroidList new_asteroid_list() {
   AsteroidList a;
-  a.head = a.tail = NULL;
+  a.head = (AsteroidNode*)NULL;
+  a.tail = (AsteroidNode*)NULL;
+  return a;
 }
 
-void delete_asteroid_list(AsteroidList* al) {
+void delete_asteroid_list(AsteroidList al) {
   AsteroidNode* n;
-  for(n = al->head; n->next != NULL; n = n->next) {
+  for(n = al.head; n->next != NULL; n = n->next) {
     delete_asteroid_node(n);
   }
-  free(al);
 }
 
 void append_asteroid_list(AsteroidList* al, AsteroidNode* n) {
@@ -84,6 +86,8 @@ void append_asteroid_list(AsteroidList* al, AsteroidNode* n) {
   n->next = NULL;
   al->tail->next = n;
   al->tail = n;
+  if (al->head == NULL)
+    al->head = n;
 }
 
 void preappend_asteroid_list(AsteroidList* al, AsteroidNode* n) {
@@ -91,4 +95,6 @@ void preappend_asteroid_list(AsteroidList* al, AsteroidNode* n) {
   n->prev = NULL;
   al->head->prev = n;
   al->head = n;
+  if (al->tail == NULL)
+    al->tail = n;
 }
