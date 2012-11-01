@@ -6,6 +6,7 @@
 #include "./vector.h"
 
 #define PARTICLEN 256
+#define PARTICLE_COLOR al_map_rgb(255, 255, 255)
 
 typedef struct Particle {
     // The position of the particle
