@@ -6,6 +6,7 @@
 
 #include "./asteroid.h"
 #include "./vector.h"
+#include "./drawing.h"
 
 Asteroid new_asteroid(Vector pos, Vector verts[VERTEXN], Vector dir) {
     Asteroid a;
@@ -140,17 +141,6 @@ void split_asteroid(AsteroidNode* asteroid) {
     asteroid->prev->next = child1;
     asteroid->next->prev = child2;
     free(asteroid);
-}
-
-void rotate_around(ALLEGRO_TRANSFORM *trans, Vector p, float angle) {
-  al_identity_transform(trans);
-  al_translate_transform(trans,
-			 p.x,
-			 p.y);
-  al_rotate_transform(trans, angle);
-  al_translate_transform(trans,
-			 p.x,
-			 p.y);
 }
 
 void draw_asteroids(AsteroidNode* n) {
