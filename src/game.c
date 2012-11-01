@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
@@ -39,7 +40,7 @@ Game* new_game(Vector size) {
 }
 
 void delete_game(Game *g) {
-    delete_asteroid_list(g->asteroids);
+    //delete_asteroid_list(g->asteroids);
     delete_particle_manager(g->particlemanager);
     delete_bullet_manager(g->bulletmanager);
     free(g);
@@ -67,8 +68,6 @@ void spawn_asteroid(Game *g) {
     AsteroidNode *n = malloc(sizeof(AsteroidNode));
     n->value = a;
 
-    // Insert at start
-    n->prev = NULL;
     if (g->asteroids == NULL) {
         g->asteroids = n;
         n->next = NULL;
@@ -86,11 +85,40 @@ void rotate_ship_right(Game *game) {
     game->ship.angle += SHIP_ROTATION_SPEED;
 }
 
+void bound_ship_speeds(Game *game) {
+    Vector *v = &game->ship.velocity;
+    if (v->x < -MAX_SPEED)
+        v->x = -MAX_SPEED;
+    if (v->x > MAX_SPEED)
+        v->x = MAX_SPEED;
+    if (v->y < -MAX_SPEED)
+        v->y = -MAX_SPEED;
+    if (v->y > MAX_SPEED)
+        v->y = MAX_SPEED;
+}
+
+void accelerate_ship(Game *game) {
+    Vector delta;
+    delta.x = (sin(-game->ship.angle) * ACCEL_CONST);
+    delta.y = (cos(-game->ship.angle) * ACCEL_CONST);
+    game->ship.velocity = vec_sub(game->ship.velocity, delta);
+    bound_ship_speeds(game);
+}
+
+void deccelerate_ship(Game *game) {
+    Vector delta;
+    delta.x = (sin(-game->ship.angle) * ACCEL_CONST);
+    delta.y = (cos(-game->ship.angle) * ACCEL_CONST);
+    game->ship.velocity = vec_add(game->ship.velocity, delta);
+    bound_ship_speeds(game);
+}
+
 void update_game(Game *game) {
     update_asteroids(game->asteroids);
     update_particle_manager(game->particlemanager);
     update_bullet_manager(game->bulletmanager);
-    game->ship.position = vec_add(game->ship.position, game->ship.velocity);
+    game->ship.position =
+        wrap(game->size, vec_add(game->ship.position, game->ship.velocity));
 
     AsteroidNode* hit = bullet_hit(game->bulletmanager, game->asteroids);
     if (hit != NULL)
@@ -116,8 +144,8 @@ void draw_ship(Game *game) {
     al_identity_transform(&trans);
     al_rotate_transform(&trans, game->ship.angle);
     al_translate_transform(&trans,
-                           game->ship.position.x,
-                           game->ship.position.y);
+                           (int)game->ship.position.x,
+                           (int)game->ship.position.y);
     al_use_transform(&trans);
 
     al_draw_line(-8, 9, 0, -11, SHIP_COLOR , 3.0f);

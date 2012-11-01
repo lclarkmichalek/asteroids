@@ -67,12 +67,6 @@ bool point_in_asteroid(Vector p, Asteroid* asteroid) {
 
 void delete_asteroid_node(AsteroidNode* n) {
     delete_asteroid(n->value);
-    if (n->prev != NULL) {
-        n->prev->next = NULL;
-    }
-    if (n->next != NULL) {
-        n->next->prev = NULL;
-    }
     free(n);
 }
 
@@ -80,12 +74,6 @@ void delete_asteroid_list(AsteroidNode* n) {
     for(; n != NULL; n = n->next) {
         delete_asteroid_node(n);
     }
-}
-
-void prepend_asteroid_list(AsteroidNode* al, AsteroidNode* n) {
-    n->next = al;
-    n->prev = NULL;
-    al->prev = n;
 }
 
 AsteroidNode* point_collides(AsteroidNode* asteroids, Vector point) {
@@ -110,11 +98,9 @@ void update_asteroids(AsteroidNode* asteroids) {
 }
 
 void split_asteroid(AsteroidNode* asteroid) {
-    AsteroidNode *child1, *child2;
-    child1 = malloc(sizeof(AsteroidNode));
-    child1->value = malloc(sizeof(Asteroid));
-    child2 = malloc(sizeof(AsteroidNode));
-    child2->value = malloc(sizeof(Asteroid));
+    AsteroidNode *child;
+    child = malloc(sizeof(AsteroidNode));
+    child->value = malloc(sizeof(Asteroid));
 
     Vector* vertex;
     for(vertex = asteroid->value->verticies;
@@ -128,20 +114,15 @@ void split_asteroid(AsteroidNode* asteroid) {
     direction1 = vec_mul(asteroid->value->direction, 1.5);
     direction2 = vec_mul(asteroid->value->direction, 0.5);
 
-    *child1->value = new_asteroid(asteroid->value->center,
-                                  asteroid->value->verticies,
-                                  direction1);
-    *child2->value = new_asteroid(asteroid->value->center,
-                                  asteroid->value->verticies,
-                                  direction2);
+    *asteroid->value = new_asteroid(asteroid->value->center,
+                                    asteroid->value->verticies,
+                                    direction1);
+    *child->value = new_asteroid(asteroid->value->center,
+                                 asteroid->value->verticies,
+                                 direction2);
 
-    child1->prev = asteroid->prev;
-    child1->next = child2;
-    child2->prev = child1;
-    child2->next = asteroid->next;
-    asteroid->prev->next = child1;
-    asteroid->next->prev = child2;
-    free(asteroid);
+    child->next = asteroid->next;
+    asteroid->next = child;
 }
 
 void draw_asteroids(AsteroidNode* n) {

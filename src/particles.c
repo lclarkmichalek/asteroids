@@ -1,16 +1,10 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <allegro5/allegro_primitives.h>
 
 #include "./particles.h"
 #include "./vector.h"
-
-bool is_alive(Particle p, ParticleManager* pm) {
-    if (p.created + p.lifetime < pm->current_frame)
-        return false;
-    else
-        return true;
-}
 
 ParticleManager* new_particle_manager() {
     ParticleManager* pm = malloc(sizeof(ParticleManager));
@@ -23,6 +17,7 @@ ParticleManager* new_particle_manager() {
         particle->velocity = new_vector();
         particle->lifetime = 0;
         particle->created = 0;
+        particle->alive = false;
     }
     return pm;
 }
@@ -36,10 +31,9 @@ void update_particle_manager(ParticleManager* pm) {
     Particle* particle;
     for(particle = pm->particles;
             (particle - pm->particles) < PARTICLEN;
-            particle++) {
-        if (pm->current_frame - particle->created >= particle->lifetime) {
+        particle++) {
+        if (particle->alive)
             particle->position = vec_add(particle->position, particle->velocity);
-        }
     }
 }
 
@@ -51,7 +45,7 @@ Particle* find_dead_particle(ParticleManager* pm) {
     for(particle = pm->particles;
             (particle - pm->particles) < PARTICLEN;
             particle++) {
-        if (pm->current_frame - particle->created >= particle->lifetime) {
+        if (!particle->alive) {
             return particle;
         }
         if (oldest == NULL || particle->created < oldest->created) {
@@ -66,7 +60,8 @@ void add_particle(ParticleManager* pm, Vector pos, Vector vel, uint lifetime) {
     particle->position = pos;
     particle->velocity = vel;
     particle->lifetime = lifetime;
-    particle->created = pm->current_frame;
+    particle->created = pm->current_frame + 1;
+    particle->alive = true;
 }
 
 void draw_particles(ParticleManager* pm) {
@@ -75,10 +70,12 @@ void draw_particles(ParticleManager* pm) {
     al_use_transform(&trans);
     Particle* p;
     for(p = pm->particles; (p - pm->particles) < PARTICLEN; p++) {
-        if(is_alive(*p, pm)) {
+        if (p->alive) {
             Vector p2 = vec_add(p->position, p->velocity);
             al_draw_line(p->position.x, p->position.y, p2.x, p2.y,
                          PARTICLE_COLOR, 1);
+            if (p->created + p->lifetime < pm->current_frame)
+                p->alive = false;
         }
     }
 }

@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "./vector.h"
 
 Vector new_vector() {
@@ -11,14 +13,14 @@ Vector new_vector() {
 Vector vec_add(Vector a, Vector b) {
     Vector c = new_vector();
     c.x = a.x + b.x;
-    c.y = a.y + a.y;
+    c.y = a.y + b.y;
     return c;
 }
 
 Vector vec_sub(Vector a, Vector b) {
     Vector c = new_vector();
     c.x = a.x - b.x;
-    c.y = a.y - a.y;
+    c.y = a.y - b.y;
     return c;
 }
 
@@ -45,4 +47,12 @@ Vector cross_product(Vector a, Vector b) {
 
 int dot_product(Vector a, Vector b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+Vector wrap(Vector size, Vector p) {
+    Vector c;
+    c.x = fmod(p.x + size.x, size.x);
+    c.y = fmod(p.y + size.y, size.y);
+    c.z = fmod(p.z + size.z, size.z);
+    return c;
 }

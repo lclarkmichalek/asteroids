@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <math.h>
 
 #include <allegro5/allegro_primitives.h>
 
@@ -9,31 +10,44 @@
 #include "./bullets.h"
 
 BulletManager* new_bullet_manager() {
-    return new_particle_manager();
+    BulletManager *bm = malloc(sizeof(BulletManager));
+    ParticleManager* pm = new_particle_manager();
+    bm->pm = *pm;
+    free(pm);
+    bm->last_shot = 0;
+    return bm;
 }
 
 void delete_bullet_manager(BulletManager* bm) {
-    delete_particle_manager(bm);
+    delete_particle_manager(&bm->pm);
 }
 
 void update_bullet_manager(BulletManager* bm) {
-    update_particle_manager(bm);
+    update_particle_manager(&bm->pm);
 }
 
 void shoot_bullet(BulletManager* bm, Ship ship) {
-    Vector velocity = vec_mul(ship.velocity, 1.2);
-    add_particle(bm, ship.position, velocity, BULLET_LIFETIME);
+    if (bm->pm.current_frame - bm->last_shot < SHOT_DELAY)
+        return;
+    bm->last_shot = bm->pm.current_frame;
+    Vector velocity = {
+        -sin(-ship.angle) * BULLET_SPEED,
+        -cos(-ship.angle) * BULLET_SPEED,
+        0
+    };
+    add_particle(&bm->pm, ship.position, velocity, BULLET_LIFETIME);
 }
 
 AsteroidNode* bullet_hit(BulletManager* bm, AsteroidNode* asteroids) {
     Particle* bullet;
-    for(bullet = bm->particles; bullet - bm->particles < PARTICLEN; bullet++) {
-        if (is_alive(*bullet, bm)) {
+    for(bullet = bm->pm.particles;
+        bullet - bm->pm.particles < PARTICLEN; bullet++) {
+        if (bullet->alive) {
             AsteroidNode* node = point_collides(asteroids, bullet->position);
-            if (node)
+            if (node) {
+                bullet->alive = false;
                 return node;
-            // Then kill the bullet
-            bullet->lifetime = 0;
+            }
         }
     }
     return NULL;
@@ -44,9 +58,9 @@ void draw_bullets(BulletManager *bm) {
     al_identity_transform(&trans);
     al_use_transform(&trans);
     Particle *b;
-    for(b = bm->particles; b - bm->particles < PARTICLEN; b++) {
-        if (is_alive(*b, bm)) {
-            Vector p2 = vec_add(b->position, b->velocity);
+    for(b = bm->pm.particles; b - bm->pm.particles < PARTICLEN; b++) {
+        if (b->alive) {
+            Vector p2 = vec_add(b->position, vec_mul(b->velocity, 1));
             al_draw_line(b->position.x, b->position.y, p2.x, p2.y,
                          BULLET_COLOR, 1);
         }

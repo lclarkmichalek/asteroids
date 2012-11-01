@@ -33,7 +33,6 @@ void delete_asteroid(Asteroid*);
 bool point_in_asteroid(Vector, Asteroid*);
 
 struct AsteroidNode {
-    struct AsteroidNode* prev;
     struct AsteroidNode* next;
     Asteroid* value;
 };
@@ -44,8 +43,6 @@ void delete_asteroid_node(AsteroidNode*);
 
 // Calls delete_asteroid_node on each element of the Asteroid list
 void delete_asteroid_list(AsteroidNode*);
-// Adds an asteroid to the front of the list
-void prepend_asteroid_list(AsteroidNode*, AsteroidNode*);
 // Returns an AsteroidNode if the point is inside any asteroid in the
 // game. Returns NULL if there is no collision
 AsteroidNode* point_collides(AsteroidNode*, Vector);

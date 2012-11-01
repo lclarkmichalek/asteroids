@@ -10,7 +10,9 @@
 #include "./bullets.h"
 
 #define LIVESN 3
-#define SHIP_ROTATION_SPEED 0.01
+#define MAX_SPEED 5
+#define ACCEL_CONST 0.3
+#define SHIP_ROTATION_SPEED 0.1
 #define SHIP_COLOR al_map_rgb(255, 255, 255)
 #define BACKGROUND_COLOR al_map_rgb(0, 0, 0)
 #define HUD_COLOR al_map_rgb(255, 255, 255)
@@ -51,6 +53,10 @@ void spawn_asteroid(Game*);
 void rotate_ship_left(Game*);
 // Rotates the ship right
 void rotate_ship_right(Game*);
+// Accelerates the ship
+void accelerate_ship(Game*);
+// Decelerates the ship
+void deccelerate_ship(Game*);
 
 // Updates the gamestate for a single frame
 void update_game(Game*);

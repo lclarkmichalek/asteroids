@@ -4,7 +4,7 @@
 typedef unsigned int uint;
 
 typedef struct Vector {
-    int x, y, z;
+    float x, y, z;
 } Vector;
 
 // Creates a new vector
@@ -21,5 +21,7 @@ uint magnitude_squared(Vector);
 Vector cross_product(Vector, Vector);
 // Calculate the dot product
 int dot_product(Vector, Vector);
+// mod over the vector
+Vector wrap(Vector, Vector);
 
 #endif

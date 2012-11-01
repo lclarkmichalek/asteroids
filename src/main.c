@@ -8,6 +8,8 @@
 
 #define FPS 60
 
+ALLEGRO_KEYBOARD_STATE *keys;
+
 int main() {
     if (!al_init()) {
         puts("Could not initialise allegro\n");
@@ -17,6 +19,7 @@ int main() {
         puts("Could not initialise allegro keyboard subsystem\n");
         return 1;
     }
+    keys = malloc(sizeof(ALLEGRO_KEYBOARD_STATE));
     if (!init_font()) {
         puts("Could not initialise allegro font subsystem\n");
         return 1;
@@ -49,28 +52,30 @@ int main() {
 
     bool running = true;
     while (running) {
+        al_get_keyboard_state(keys);
+
+        if (al_key_down(keys, ALLEGRO_KEY_ESCAPE))
+            running = false;
+        if (al_key_down(keys, ALLEGRO_KEY_LEFT))
+            rotate_ship_left(game);
+        if (al_key_down(keys, ALLEGRO_KEY_RIGHT))
+            rotate_ship_right(game);
+        if (al_key_down(keys, ALLEGRO_KEY_UP))
+            accelerate_ship(game);
+        if (al_key_down(keys, ALLEGRO_KEY_DOWN))
+            deccelerate_ship(game);
+        if (al_key_down(keys, ALLEGRO_KEY_SPACE))
+            shoot_bullet(game->bulletmanager, game->ship);
+
         al_wait_for_event(eq, NULL);
         if (!al_get_next_event(eq, event)) {
-            puts("No Event\n");
             continue;
         }
         switch(event->type) {
         case ALLEGRO_EVENT_DISPLAY_CLOSE:
             running = false;
             break;
-        case ALLEGRO_EVENT_KEY_CHAR:
-            switch(event->keyboard.keycode) {
-            case ALLEGRO_KEY_ESCAPE:
-                running = false;
-                break;
-            case ALLEGRO_KEY_LEFT:
-                rotate_ship_left(game);
-                break;
-            case ALLEGRO_KEY_RIGHT:
-                rotate_ship_right(game);
-                break;
-            }
-            break;
+
         case ALLEGRO_EVENT_TIMER:
             update_game(game);
             if (game->lives < 0) {
@@ -81,6 +86,12 @@ int main() {
             draw_game(game);
 
             al_flip_display();
+            break;
+
+        case ALLEGRO_EVENT_KEY_CHAR:
+            if (event->keyboard.keycode == ALLEGRO_KEY_SPACE)
+                shoot_bullet(game->bulletmanager, game->ship);
+             break;
         }
     }
 

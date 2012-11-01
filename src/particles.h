@@ -18,6 +18,8 @@ typedef struct Particle {
     uint lifetime;
     // The frame that the particle was created
     uint created;
+    // Is the particle alive
+    bool alive;
 } Particle;
 
 typedef struct ParticleManager {
@@ -35,9 +37,6 @@ void delete_particle_manager(ParticleManager*);
 void update_particle_manager(ParticleManager*);
 // Adds a particle to the particle manager with the given position, direction and lifetime
 void add_particle(ParticleManager*, Vector, Vector, uint);
-
-// Returns true if the particle is alive
-bool is_alive(Particle, ParticleManager*);
 
 // Draws the particles
 void draw_particles(ParticleManager*);

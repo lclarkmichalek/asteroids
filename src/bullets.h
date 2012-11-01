@@ -5,10 +5,15 @@
 #include "./ship.h"
 #include "./asteroid.h"
 
-#define BULLET_LIFETIME 120
+#define BULLET_LIFETIME 60
+#define BULLET_SPEED 7
 #define BULLET_COLOR al_map_rgb(255, 255, 255)
+#define SHOT_DELAY 7
 
-typedef ParticleManager BulletManager;
+typedef struct {
+    ParticleManager pm;
+    uint last_shot;
+} BulletManager;
 
 // Creates a new empty bullet manager
 BulletManager* new_bullet_manager();
