@@ -25,3 +25,6 @@
     - Draw game
     - Flip surface
     - Check game is still running
+
+- BUGS
+  - Entities are not wrapped around.
