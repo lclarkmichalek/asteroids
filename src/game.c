@@ -15,6 +15,15 @@
 
 #include "./game.h"
 
+ALLEGRO_FONT *ttf_font = NULL;
+
+bool init_font() {
+    if (!init_font())
+        return 1;
+    ttf_font = al_load_ttf_font("font.ttf", 30, 0);
+    return !ttf_font;
+}
+
 Game* new_game(Vector size) {
     Game *game = malloc(sizeof(Game));
     game->asteroids = NULL;

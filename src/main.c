@@ -3,13 +3,10 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_ttf.h>
 
 #include "./game.h"
 
 #define FPS 60
-
-ALLEGRO_FONT *ttf_font = NULL;
 
 int main() {
     if (!al_init()) {
@@ -20,13 +17,8 @@ int main() {
         puts("Could not initialise allegro keyboard subsystem\n");
         return 1;
     }
-    if (!al_init_ttf_addon()) {
+    if (!init_font()) {
         puts("Could not initialise allegro font subsystem\n");
-        return 1;
-    }
-    ttf_font = al_load_ttf_font("font.ttf", 30, 0);
-    if (!ttf_font) {
-        puts("Could not load font, make sure file font.ttf is in current directory\n");
         return 1;
     }
 

@@ -1,6 +1,8 @@
 #ifndef _GAME_H
 #define _GAME_H
 
+#include <stdbool.h>
+
 #include "./vector.h"
 #include "./asteroid.h"
 #include "./particles.h"
@@ -12,6 +14,9 @@
 #define SHIP_COLOR al_map_rgb(255, 255, 255)
 #define BACKGROUND_COLOR al_map_rgb(0, 0, 0)
 #define HUD_COLOR al_map_rgb(255, 255, 255)
+
+// Initialises and loads fonts
+bool init_font();
 
 typedef struct Game {
     // The currently displayed asteroids
