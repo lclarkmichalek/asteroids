@@ -40,15 +40,15 @@ AsteroidNode* bullet_hit(BulletManager* bm, AsteroidNode* asteroids) {
 }
 
 void draw_bullets(BulletManager *bm) {
-  ALLEGRO_TRANSFORM trans;
-  al_identity_transform(&trans);
-  al_use_transform(&trans);
-  Particle *b;
-  for(b = bm->particles; b - bm->particles < PARTICLEN; b++) {
-    if (is_alive(*b, bm)) {
-      Vector p2 = vec_add(b->position, b->velocity);
-      al_draw_line(b->position.x, b->position.y, p2.x, p2.y,
-		   BULLET_COLOR, 1);
+    ALLEGRO_TRANSFORM trans;
+    al_identity_transform(&trans);
+    al_use_transform(&trans);
+    Particle *b;
+    for(b = bm->particles; b - bm->particles < PARTICLEN; b++) {
+        if (is_alive(*b, bm)) {
+            Vector p2 = vec_add(b->position, b->velocity);
+            al_draw_line(b->position.x, b->position.y, p2.x, p2.y,
+                         BULLET_COLOR, 1);
+        }
     }
-  }
 }

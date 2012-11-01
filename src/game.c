@@ -57,34 +57,34 @@ void update_game(Game *game) {
 }
 
 void draw_game(Game *game) {
-  al_clear_to_color(BACKGROUND_COLOR);
+    al_clear_to_color(BACKGROUND_COLOR);
 
     draw_asteroids(game->asteroids);
     draw_ship(game);
     draw_bullets(game->bulletmanager);
     draw_particles(game->particlemanager);
-    
+
     draw_hud(game);
 }
 
 void draw_ship(Game *game) {
-  ALLEGRO_TRANSFORM trans;
-  al_identity_transform(&trans);
-  al_rotate_transform(&trans, game->ship->angle);
-  al_translate_transform(&trans,
-			 game->ship->position.x,
-			 game->ship->position.y);
-  al_use_transform(&trans);
+    ALLEGRO_TRANSFORM trans;
+    al_identity_transform(&trans);
+    al_rotate_transform(&trans, game->ship->angle);
+    al_translate_transform(&trans,
+                           game->ship->position.x,
+                           game->ship->position.y);
+    al_use_transform(&trans);
 
-  al_draw_line(-8, 9, 0, -11, SHIP_COLOR , 3.0f);
-  al_draw_line(0, -11, 8, 9, SHIP_COLOR, 3.0f);
-  al_draw_line(-6, 4, -1, 4, SHIP_COLOR, 3.0f);
-  al_draw_line(6, 4, 1, 4, SHIP_COLOR, 3.0f);
+    al_draw_line(-8, 9, 0, -11, SHIP_COLOR , 3.0f);
+    al_draw_line(0, -11, 8, 9, SHIP_COLOR, 3.0f);
+    al_draw_line(-6, 4, -1, 4, SHIP_COLOR, 3.0f);
+    al_draw_line(6, 4, 1, 4, SHIP_COLOR, 3.0f);
 }
 
 void draw_hud(Game *game) {
-  char buffer[80];
-  sprintf(buffer, "%i", game->score);
-  al_draw_text(ttf_font, HUD_COLOR, 0, 0, ALLEGRO_ALIGN_LEFT,
-	       buffer);
+    char buffer[80];
+    sprintf(buffer, "%i", game->score);
+    al_draw_text(ttf_font, HUD_COLOR, 0, 0, ALLEGRO_ALIGN_LEFT,
+                 buffer);
 }

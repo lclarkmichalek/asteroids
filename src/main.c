@@ -21,13 +21,13 @@ int main() {
         return 1;
     }
     if (!al_init_ttf_addon()) {
-      puts("Could not initialise allegro font subsystem\n");
-      return 1;
+        puts("Could not initialise allegro font subsystem\n");
+        return 1;
     }
     ttf_font = al_load_ttf_font("font.ttf", 30, 0);
     if (!ttf_font) {
-      puts("Could not load font, make sure file font.ttf is in current directory\n");
-      return 1;
+        puts("Could not load font, make sure file font.ttf is in current directory\n");
+        return 1;
     }
 
     Vector size = {500, 500, 0};

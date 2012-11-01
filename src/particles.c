@@ -70,15 +70,15 @@ void add_particle(ParticleManager* pm, Vector pos, Vector vel, uint lifetime) {
 }
 
 void draw_particles(ParticleManager* pm) {
-  ALLEGRO_TRANSFORM trans;
-  al_identity_transform(&trans);
-  al_use_transform(&trans);
+    ALLEGRO_TRANSFORM trans;
+    al_identity_transform(&trans);
+    al_use_transform(&trans);
     Particle* p;
     for(p = pm->particles; (p - pm->particles) < PARTICLEN; p++) {
-      if(is_alive(*p, pm)) {
-	Vector p2 = vec_add(p->position, p->velocity);
-	al_draw_line(p->position.x, p->position.y, p2.x, p2.y,
-		     PARTICLE_COLOR, 1);
-      }
+        if(is_alive(*p, pm)) {
+            Vector p2 = vec_add(p->position, p->velocity);
+            al_draw_line(p->position.x, p->position.y, p2.x, p2.y,
+                         PARTICLE_COLOR, 1);
+        }
     }
 }

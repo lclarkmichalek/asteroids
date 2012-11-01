@@ -101,8 +101,8 @@ AsteroidNode* point_collides(AsteroidNode* asteroids, Vector point) {
 void update_asteroids(AsteroidNode* asteroids) {
     AsteroidNode *node;
     for(node = asteroids;
-        node != NULL;
-        node = node->next) {
+            node != NULL;
+            node = node->next) {
         node->value->center = vec_add(node->value->center,
                                       node->value->direction);
         node->value->angle += ASTEROID_ROTATION_SPEED;
@@ -118,8 +118,8 @@ void split_asteroid(AsteroidNode* asteroid) {
 
     Vector* vertex;
     for(vertex = asteroid->value->verticies;
-        vertex - asteroid->value->verticies < VERTEXN;
-        vertex++) {
+            vertex - asteroid->value->verticies < VERTEXN;
+            vertex++) {
         *vertex = vec_mul(*vertex, 0.5);
     }
 
@@ -145,19 +145,19 @@ void split_asteroid(AsteroidNode* asteroid) {
 }
 
 void draw_asteroids(AsteroidNode* n) {
-  ALLEGRO_TRANSFORM trans;
-  for(; n != NULL; n = n->next) {
-    rotate_around(&trans, n->value->center, n->value->angle);
-    al_use_transform(&trans);
+    ALLEGRO_TRANSFORM trans;
+    for(; n != NULL; n = n->next) {
+        rotate_around(&trans, n->value->center, n->value->angle);
+        al_use_transform(&trans);
 
-    Vector *a, *b;
-    b = n->value->verticies[VERTEXN - 1];
-    for(a = n->value->verticies;
-	a - n->value->verticies < VERTEXN;
-	b = a, a++) {
-      al_draw_line(a->x, a->y, b->x, b->y, ASTEROID_COLOR, 1);
+        Vector *a, *b;
+        b = n->value->verticies[VERTEXN - 1];
+        for(a = n->value->verticies;
+                a - n->value->verticies < VERTEXN;
+                b = a, a++) {
+            al_draw_line(a->x, a->y, b->x, b->y, ASTEROID_COLOR, 1);
+        }
     }
-  }
-  al_identitiy_transform(trans);
-  al_use_transform(&trans);
+    al_identitiy_transform(trans);
+    al_use_transform(&trans);
 }
