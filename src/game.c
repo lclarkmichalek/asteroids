@@ -71,10 +71,10 @@ void draw_game(Game *game) {
 void draw_ship(Game *game) {
     ALLEGRO_TRANSFORM trans;
     al_identity_transform(&trans);
-    al_rotate_transform(&trans, game->ship->angle);
+    al_rotate_transform(&trans, game->ship.angle);
     al_translate_transform(&trans,
-                           game->ship->position.x,
-                           game->ship->position.y);
+                           game->ship.position.x,
+                           game->ship.position.y);
     al_use_transform(&trans);
 
     al_draw_line(-8, 9, 0, -11, SHIP_COLOR , 3.0f);
