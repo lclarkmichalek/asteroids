@@ -151,7 +151,7 @@ void draw_asteroids(AsteroidNode* n) {
         al_use_transform(&trans);
 
         Vector *a, *b;
-        b = n->value->verticies[VERTEXN - 1];
+        b = &n->value->verticies[VERTEXN - 1];
         for(a = n->value->verticies;
                 a - n->value->verticies < VERTEXN;
                 b = a, a++) {
