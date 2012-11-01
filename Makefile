@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-c -Wall -Wextra -Werror -pedantic -std=c99 -g
-LDFLAGS=-lallegro
+LDFLAGS=-lallegro -lallegro_primitives -lallegro_font
 SOURCES= \
 	src/vector.c src/particles.c src/asteroid.c \
 	src/ship.c src/game.c src/bullets.c \
