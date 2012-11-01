@@ -17,6 +17,8 @@
 #define BACKGROUND_COLOR al_map_rgb(0, 0, 0)
 #define HUD_COLOR al_map_rgb(255, 255, 255)
 #define ASTEROID_SCORE 100
+#define SHIP_FRICTION 0.01
+#define ASTEROID_PARTICLEN 20
 
 // Initialises and loads fonts
 bool init_font();
@@ -66,6 +68,8 @@ void split_asteroid(Game*, AsteroidNode*);
 
 // Updates the gamestate for a single frame
 void update_game(Game*);
+// Updates the ship
+void update_ship(Game*);
 // Draws the game
 void draw_game(Game*);
 // Draws the spaceship

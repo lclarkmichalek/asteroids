@@ -182,10 +182,23 @@ void update_game(Game *game) {
 
     AsteroidNode* hit = bullet_hit(game->bulletmanager, game->asteroids);
     if (hit != NULL) {
+        Vector unit = {0, 1, 0};
+        char n;
+        for (n = 0; n < ASTEROID_PARTICLEN; n++) {
+            float angle = (float)drand48() * 2 * 3.142;
+            float mag = (float) drand48() * 2;
+            Vector direction =  vec_mul(rotate(unit, angle), mag);
+            add_particle(game->particlemanager,
+                         hit->value->center, direction, 60);
+        }
         split_asteroid(game, hit);
         game->score += ASTEROID_SCORE;
     }
 
+    update_ship(game);
+}
+
+void update_ship(Game* game) {
     if (game->ship.invincible) {
         game->ship.invincible--;
     } else {
@@ -199,6 +212,7 @@ void update_game(Game *game) {
             game->ship.angle = 0;
         }
     }
+    game->ship.velocity = vec_mul(game->ship.velocity, 1 - SHIP_FRICTION);
 }
 
 void draw_game(Game *game) {
@@ -232,8 +246,24 @@ void draw_ship(Game *game) {
 }
 
 void draw_hud(Game *game) {
-    char buffer[10];
-    snprintf(buffer, sizeof(char[10]), "%d", game->score);
+    ALLEGRO_TRANSFORM trans;
+    al_identity_transform(&trans);
+    al_use_transform(&trans);
+
+    char buffer[17] = "Score: ";
+    snprintf(buffer + 7, sizeof(char[10]), "%d", game->score);
     al_draw_text(ttf_font, HUD_COLOR, 0, 0, ALLEGRO_ALIGN_LEFT,
                  buffer);
+
+    int i;
+    for (i = 0; i != game->lives; i++) {
+        al_identity_transform(&trans);
+        al_translate_transform(&trans, 30 + 30 * i, 50);
+        al_use_transform(&trans);
+
+        al_draw_line(-8, 9, 0, -11, SHIP_COLOR , 1.0f);
+        al_draw_line(0, -11, 8, 9, SHIP_COLOR, 1.0f);
+        al_draw_line(-6, 4, -1, 4, SHIP_COLOR, 1.0f);
+        al_draw_line(6, 4, 1, 4, SHIP_COLOR, 1.0f);
+    }
 }
