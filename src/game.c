@@ -55,4 +55,11 @@ void update_game(Game *game) {
 
 void draw_game(Game *game) {
     al_clear_to_color(al_map_rgb(0, 0, 0));
+
+    draw_asteroids(game->asteroids);
+    draw_ship(game);
+    draw_bullets(game->bulletmanager);
+    draw_particles(game->particlemanager);
+    
+    draw_hud(game);
 }
