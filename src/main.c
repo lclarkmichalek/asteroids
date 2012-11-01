@@ -25,13 +25,15 @@ int main() {
         return 1;
     }
 
-    Vector size = {500, 500, 0};
-
-    ALLEGRO_DISPLAY* display = al_create_display(size.x, size.y);
+    ALLEGRO_DISPLAY* display = al_create_display(500, 500);
     if (!display) {
         puts("Could not initialise allegro display\n");
         return 1;
     }
+
+    Vector size = {al_get_display_width(display),
+                   al_get_display_height(display),
+                   0};
 
     Game* game = new_game(size);
     spawn_asteroid(game);
@@ -72,21 +74,31 @@ int main() {
             continue;
         }
         switch(event->type) {
+        case ALLEGRO_EVENT_DISPLAY_RESIZE:
+            puts("Resizing");
+            game->size.x = event->display.x;
+            game->size.y = event->display.y;
+            al_acknowledge_resize(display);
+            break;
+
         case ALLEGRO_EVENT_DISPLAY_CLOSE:
             running = false;
             break;
 
-        case ALLEGRO_EVENT_TIMER:
+        case ALLEGRO_EVENT_TIMER: {
+            int oldlives = game->lives;
             update_game(game);
-            if (game->lives < 0) {
-                running = false;
-                break;
+            if (game->lives != oldlives) {
+                puts("Restaring game");
             }
+            if (game->lives < 0)
+                running = false;
 
             draw_game(game);
 
             al_flip_display();
             break;
+        }
 
         case ALLEGRO_EVENT_KEY_CHAR:
             if (event->keyboard.keycode == ALLEGRO_KEY_SPACE)

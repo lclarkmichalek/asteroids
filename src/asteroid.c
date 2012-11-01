@@ -26,6 +26,7 @@ Asteroid new_asteroid(Vector pos, Vector verts[VERTEXN], Vector dir) {
 
     a.direction = dir;
     a.angle = 0;
+    a.invincible = ASTEROID_INVINCIBLE;
     return a;
 }
 
@@ -79,22 +80,36 @@ void delete_asteroid_list(AsteroidNode* n) {
 AsteroidNode* point_collides(AsteroidNode* asteroids, Vector point) {
     AsteroidNode *node = asteroids;
     for(; node != NULL; node = node->next) {
-        if (point_in_asteroid(point, node->value)) {
+        if (!node->value->invincible && point_in_asteroid(point, node->value)) {
             return node;
         }
     }
     return NULL;
 }
 
-void update_asteroids(AsteroidNode* asteroids) {
+void update_asteroids(AsteroidNode* asteroids, Vector size) {
     AsteroidNode *node;
     for(node = asteroids;
         node != NULL;
         node = node->next) {
-        node->value->center = vec_add(node->value->center,
-                                      node->value->direction);
+        if (node->value->invincible)
+            node->value->invincible--;
+        node->value->center = wrap(size,
+                                   vec_add(node->value->center,
+                                           node->value->direction));
         node->value->angle += ASTEROID_ROTATION_SPEED;
     }
+}
+
+void bound_asteroid_speeds(Vector *v) {
+    if (v->x < -ASTEROID_SPEED)
+        v->x = -ASTEROID_SPEED;
+    if (v->x > ASTEROID_SPEED)
+        v->x = ASTEROID_SPEED;
+    if (v->y < -ASTEROID_SPEED)
+        v->y = -ASTEROID_SPEED;
+    if (v->y > ASTEROID_SPEED)
+        v->y = ASTEROID_SPEED;
 }
 
 void split_asteroid(AsteroidNode* asteroid) {
@@ -110,9 +125,10 @@ void split_asteroid(AsteroidNode* asteroid) {
     }
 
     Vector direction1, direction2;
-    // D1 = D0 + (0, 1)
-    direction1 = vec_mul(asteroid->value->direction, 1.5);
-    direction2 = vec_mul(asteroid->value->direction, 0.5);
+    direction1 = rotate(asteroid->value->direction, 3.0/4.0 * 3.142);
+    direction2 = rotate(asteroid->value->direction, 5.0/4.0 * 3.142);
+    bound_asteroid_speeds(&direction1);
+    bound_asteroid_speeds(&direction2);
 
     *asteroid->value = new_asteroid(asteroid->value->center,
                                     asteroid->value->verticies,

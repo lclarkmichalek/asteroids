@@ -10,7 +10,7 @@
 #include "./bullets.h"
 
 #define LIVESN 3
-#define MAX_SPEED 5
+#define MAX_SPEED 3
 #define ACCEL_CONST 0.3
 #define SHIP_ROTATION_SPEED 0.1
 #define SHIP_COLOR al_map_rgb(255, 255, 255)
@@ -47,6 +47,8 @@ typedef struct Game {
 Game* new_game(Vector size);
 // Deletes the game and all component parts
 void delete_game(Game*);
+// Restarts the game
+void restart_game(Game*);
 // Spawns a new asteroid. The ship will _not_ be inside the asteroid.
 void spawn_asteroid(Game*);
 // Rotates the ship left

@@ -6,8 +6,10 @@
 #include "./vector.h"
 
 #define VERTEXN 12
-#define ASTEROID_ROTATION_SPEED 0.05
+#define ASTEROID_ROTATION_SPEED 0.02
 #define ASTEROID_COLOR al_map_rgb(255, 255, 255)
+#define ASTEROID_INVINCIBLE 30
+#define ASTEROID_SPEED 1
 
 typedef struct Asteroid {
     // The position vectors of the verticies, relative to the center
@@ -22,6 +24,9 @@ typedef struct Asteroid {
     Vector direction;
     // The angle of the Asteroid in radians
     float angle;
+
+    // How many frames the asteroid is invincible for
+    char invincible;
 } Asteroid;
 
 // Creates a new Asteroid at the given position, with the given verticies
@@ -47,7 +52,7 @@ void delete_asteroid_list(AsteroidNode*);
 // game. Returns NULL if there is no collision
 AsteroidNode* point_collides(AsteroidNode*, Vector);
 // Updates the positions of the asteroids for one frame
-void update_asteroids(AsteroidNode*);
+void update_asteroids(AsteroidNode*, Vector);
 // Splits an asteroid in two, removes it from the list, and adds the
 // new ones to the list
 void split_asteroid(AsteroidNode*);

@@ -40,7 +40,7 @@ Game* new_game(Vector size) {
 }
 
 void delete_game(Game *g) {
-    //delete_asteroid_list(g->asteroids);
+    delete_asteroid_list(g->asteroids);
     delete_particle_manager(g->particlemanager);
     delete_bullet_manager(g->bulletmanager);
     free(g);
@@ -114,18 +114,34 @@ void deccelerate_ship(Game *game) {
 }
 
 void update_game(Game *game) {
-    update_asteroids(game->asteroids);
+    update_asteroids(game->asteroids, game->size);
     update_particle_manager(game->particlemanager);
     update_bullet_manager(game->bulletmanager);
     game->ship.position =
         wrap(game->size, vec_add(game->ship.position, game->ship.velocity));
 
     AsteroidNode* hit = bullet_hit(game->bulletmanager, game->asteroids);
-    if (hit != NULL)
+    if (hit != NULL) {
+        if (hit == game->asteroids)
+            puts("T");
+        else
+            puts("F");
         split_asteroid(hit);
+    }
 
-    if (point_collides(game->asteroids, game->ship.position) != NULL)
+    if (!game->ship.invincible &&
+        point_collides(game->asteroids, game->ship.position) != NULL) {
         game->lives--;
+        game->ship.invincible = SHIP_INVINCIBLE;
+    }
+    if (game->ship.invincible)
+        game->ship.invincible--;
+
+    int c = 0;
+    AsteroidNode* n;
+    for(n = game->asteroids; n != NULL; n = n->next)
+        c++;
+    printf("A: %i L: %i I: %i\n", c, game->lives, game->ship.invincible);
 }
 
 void draw_game(Game *game) {
@@ -140,6 +156,10 @@ void draw_game(Game *game) {
 }
 
 void draw_ship(Game *game) {
+    // Flash the ship if it's invincible
+    if (game->ship.invincible % 30 > 2)
+        return;
+
     ALLEGRO_TRANSFORM trans;
     al_identity_transform(&trans);
     al_rotate_transform(&trans, game->ship.angle);

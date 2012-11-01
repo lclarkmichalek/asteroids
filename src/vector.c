@@ -56,3 +56,11 @@ Vector wrap(Vector size, Vector p) {
     c.z = fmod(p.z + size.z, size.z);
     return c;
 }
+
+Vector rotate(Vector v, float a) {
+    Vector c;
+    c.x = v.x * cos(a) - v.y * sin(a);
+    c.y = v.x * sin(a) + v.y * cos(a);
+    c.z = 0; // Shh don't tell
+    return c;
+}

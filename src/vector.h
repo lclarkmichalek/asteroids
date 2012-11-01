@@ -23,5 +23,7 @@ Vector cross_product(Vector, Vector);
 int dot_product(Vector, Vector);
 // mod over the vector
 Vector wrap(Vector, Vector);
+// Rotates the vector in 2 dimensions
+Vector rotate(Vector, float);
 
 #endif
