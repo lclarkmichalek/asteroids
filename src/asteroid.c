@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
 #include "./asteroid.h"

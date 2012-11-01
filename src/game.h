@@ -48,7 +48,9 @@ void rotate_ship_right(Game*);
 
 // Updates the gamestate for a single frame
 void update_game(Game*);
-
+// Draws the game
 void draw_game(Game*);
+// Draws the spaceship
+void draw_ship(Game*);
 
 #endif
