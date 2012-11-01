@@ -158,6 +158,6 @@ void draw_asteroids(AsteroidNode* n) {
             al_draw_line(a->x, a->y, b->x, b->y, ASTEROID_COLOR, 1);
         }
     }
-    al_identitiy_transform(trans);
+    al_identity_transform(&trans);
     al_use_transform(&trans);
 }
