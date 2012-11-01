@@ -7,6 +7,7 @@
 
 #define VERTEXN 12
 #define ASTEROID_ROTATION_SPEED 0.05
+#define ASTEROID_COLOR al_map_rgb(255, 255, 255)
 
 typedef struct Asteroid {
     // The position vectors of the verticies, relative to the center

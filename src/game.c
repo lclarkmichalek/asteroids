@@ -54,7 +54,7 @@ void update_game(Game *game) {
 }
 
 void draw_game(Game *game) {
-    al_clear_to_color(al_map_rgb(0, 0, 0));
+  al_clear_to_color(BACKGROUND_COLOR);
 
     draw_asteroids(game->asteroids);
     draw_ship(game);

@@ -9,6 +9,8 @@
 
 #define LIVESN 3
 #define SHIP_ROTATION_SPEED 0.01
+#define SHIP_COLOR al_map_rgb(255, 255, 255)
+#define BACKGROUND_COLOR al_map_rgb(0, 0, 0)
 
 typedef struct Game {
     // The currently displayed asteroids
