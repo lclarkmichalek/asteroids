@@ -3,7 +3,7 @@
 
 #include "./vector.h"
 
-#define SHIP_INVINCIBLE 60
+#define SHIP_INVINCIBLE 90
 
 typedef struct Ship {
     // The position of the ship

@@ -12,22 +12,24 @@ ALLEGRO_KEYBOARD_STATE *keys;
 
 int main() {
     if (!al_init()) {
-        puts("Could not initialise allegro\n");
+        puts("Could not initialise allegro");
         return 1;
     }
     if (!al_install_keyboard()) {
-        puts("Could not initialise allegro keyboard subsystem\n");
+        puts("Could not initialise allegro keyboard subsystem");
         return 1;
     }
     keys = malloc(sizeof(ALLEGRO_KEYBOARD_STATE));
     if (!init_font()) {
-        puts("Could not initialise allegro font subsystem\n");
+        puts("Could not initialise allegro font subsystem");
         return 1;
     }
 
-    ALLEGRO_DISPLAY* display = al_create_display(500, 500);
+    al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW);
+
+    ALLEGRO_DISPLAY* display = al_create_display(1, 1);
     if (!display) {
-        puts("Could not initialise allegro display\n");
+        puts("Could not initialise allegro display");
         return 1;
     }
 
@@ -42,7 +44,7 @@ int main() {
 
     ALLEGRO_EVENT_QUEUE* eq = al_create_event_queue();
     if (!eq) {
-        puts("Could not create allegro event queue\n");
+        puts("Could not create allegro event queue");
         return 1;
     }
     al_register_event_source(eq, al_get_timer_event_source(timer));
@@ -75,7 +77,6 @@ int main() {
         }
         switch(event->type) {
         case ALLEGRO_EVENT_DISPLAY_RESIZE:
-            puts("Resizing");
             game->size.x = event->display.x;
             game->size.y = event->display.y;
             al_acknowledge_resize(display);

@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
@@ -11,13 +12,13 @@
 
 Asteroid new_asteroid(Vector pos, Vector verts[VERTEXN], Vector dir) {
     Asteroid a;
-    a.center = vec_add(pos, verts[VERTEXN/2]);
     memcpy(a.verticies, verts, sizeof(Vector[VERTEXN]));
+    a.center = vec_add(pos, verts[VERTEXN/2]);
 
     Vector *vert;
-    uint largest_mg2 = 0;
-    for(vert = a.verticies; (uint)(vert - a.verticies) < VERTEXN; vert++) {
-        uint mag = magnitude_squared(vec_sub(*vert, a.center));
+    int largest_mg2 = -1;
+    for(vert = a.verticies; vert - a.verticies < VERTEXN; vert++) {
+        int mag = magnitude_squared(*vert);
         if (mag > largest_mg2) {
             largest_mg2 = mag;
         }
@@ -27,6 +28,7 @@ Asteroid new_asteroid(Vector pos, Vector verts[VERTEXN], Vector dir) {
     a.direction = dir;
     a.angle = 0;
     a.invincible = ASTEROID_INVINCIBLE;
+    a.generation = MAX_GENERATION;
     return a;
 }
 
@@ -49,9 +51,8 @@ bool in_triangle(Vector point, Vector a, Vector b, Vector c) {
 
 bool point_in_asteroid(Vector p, Asteroid* asteroid) {
     if (magnitude_squared(vec_sub(p, asteroid->center)) >
-            asteroid->radius_squared) {
+        asteroid->radius_squared)
         return false;
-    }
 
     Vector *a, *b;
     b = asteroid->verticies + VERTEXN - 1; // last element
@@ -101,46 +102,6 @@ void update_asteroids(AsteroidNode* asteroids, Vector size) {
     }
 }
 
-void bound_asteroid_speeds(Vector *v) {
-    if (v->x < -ASTEROID_SPEED)
-        v->x = -ASTEROID_SPEED;
-    if (v->x > ASTEROID_SPEED)
-        v->x = ASTEROID_SPEED;
-    if (v->y < -ASTEROID_SPEED)
-        v->y = -ASTEROID_SPEED;
-    if (v->y > ASTEROID_SPEED)
-        v->y = ASTEROID_SPEED;
-}
-
-void split_asteroid(AsteroidNode* asteroid) {
-    AsteroidNode *child;
-    child = malloc(sizeof(AsteroidNode));
-    child->value = malloc(sizeof(Asteroid));
-
-    Vector* vertex;
-    for(vertex = asteroid->value->verticies;
-        vertex - asteroid->value->verticies < VERTEXN;
-        vertex++) {
-        *vertex = vec_mul(*vertex, 0.5);
-    }
-
-    Vector direction1, direction2;
-    direction1 = rotate(asteroid->value->direction, 3.0/4.0 * 3.142);
-    direction2 = rotate(asteroid->value->direction, 5.0/4.0 * 3.142);
-    bound_asteroid_speeds(&direction1);
-    bound_asteroid_speeds(&direction2);
-
-    *asteroid->value = new_asteroid(asteroid->value->center,
-                                    asteroid->value->verticies,
-                                    direction1);
-    *child->value = new_asteroid(asteroid->value->center,
-                                 asteroid->value->verticies,
-                                 direction2);
-
-    child->next = asteroid->next;
-    asteroid->next = child;
-}
-
 void draw_asteroids(AsteroidNode* n) {
     ALLEGRO_TRANSFORM trans;
     for(; n != NULL; n = n->next) {
@@ -150,9 +111,9 @@ void draw_asteroids(AsteroidNode* n) {
         Vector *a, *b;
         b = &n->value->verticies[VERTEXN - 1];
         for(a = n->value->verticies;
-                a - n->value->verticies < VERTEXN;
-                b = a, a++) {
-            al_draw_line(a->x, a->y, b->x, b->y, ASTEROID_COLOR, 1);
+            a - n->value->verticies < VERTEXN;
+            b = a, a++) {
+            al_draw_line(a->x, a->y, b->x, b->y, ASTEROID_COLOR, 2);
         }
     }
 }

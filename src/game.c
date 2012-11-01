@@ -23,7 +23,7 @@ bool init_font() {
     if (!al_init_ttf_addon())
         return 1;
     ttf_font = al_load_ttf_font("font.ttf", 30, 0);
-    return !ttf_font;
+    return ttf_font != NULL;
 }
 
 Game* new_game(Vector size) {
@@ -49,17 +49,17 @@ void delete_game(Game *g) {
 void spawn_asteroid(Game *g) {
     Vector verts[VERTEXN] = {
         {0, 0, 0},
-        {20, 10, 0},
-        {10, 20, 0},
-        {0, 15, 0},
-        {-20, 20, 0},
-        {-25, 5, 0},
-        {-25, -10, 0},
-        {-5, -10, 0},
-        {-10, -20, 0},
-        {5, -20, 0},
-        {20, -10, 0},
-        {20, -5, 0}};
+        {100, 50, 0},
+        {50, 100, 0},
+        {0, 75, 0},
+        {-100, 100, 0},
+        {-125, 25, 0},
+        {-125, -50, 0},
+        {-25, -50, 0},
+        {-50, -100, 0},
+        {25, -100, 0},
+        {100, -50, 0},
+        {100, -25, 0}};
     Vector pos = {0, 0, 0};
     Vector dir = {1, 3, 0};
 
@@ -68,6 +68,7 @@ void spawn_asteroid(Game *g) {
     AsteroidNode *n = malloc(sizeof(AsteroidNode));
     n->value = a;
 
+    n->prev = NULL;
     if (g->asteroids == NULL) {
         g->asteroids = n;
         n->next = NULL;
@@ -98,6 +99,8 @@ void bound_ship_speeds(Game *game) {
 }
 
 void accelerate_ship(Game *game) {
+    if (game->ship.invincible)
+        return;
     Vector delta;
     delta.x = (sin(-game->ship.angle) * ACCEL_CONST);
     delta.y = (cos(-game->ship.angle) * ACCEL_CONST);
@@ -106,6 +109,8 @@ void accelerate_ship(Game *game) {
 }
 
 void deccelerate_ship(Game *game) {
+    if (game->ship.invincible)
+        return;
     Vector delta;
     delta.x = (sin(-game->ship.angle) * ACCEL_CONST);
     delta.y = (cos(-game->ship.angle) * ACCEL_CONST);
@@ -113,35 +118,87 @@ void deccelerate_ship(Game *game) {
     bound_ship_speeds(game);
 }
 
+void bound_asteroid_speeds(Vector *v) {
+    if (v->x < -ASTEROID_SPEED)
+        v->x = -ASTEROID_SPEED;
+    if (v->x > ASTEROID_SPEED)
+        v->x = ASTEROID_SPEED;
+    if (v->y < -ASTEROID_SPEED)
+        v->y = -ASTEROID_SPEED;
+    if (v->y > ASTEROID_SPEED)
+        v->y = ASTEROID_SPEED;
+}
+
+void split_asteroid(Game* game, AsteroidNode *asteroid) {
+    char oldgen = asteroid->value->generation;
+    if (oldgen - 1 < 0) {
+        if (asteroid->prev)
+            asteroid->prev->next = asteroid->next;
+        else
+            game->asteroids = asteroid->next;
+        if (asteroid->next)
+            asteroid->next->prev = asteroid->prev;
+        free(asteroid->value);
+        free(asteroid);
+        return;
+    }
+
+    AsteroidNode *child;
+    child = malloc(sizeof(AsteroidNode));
+    child->value = malloc(sizeof(Asteroid));
+
+    Vector* vertex;
+    for(vertex = asteroid->value->verticies;
+        vertex - asteroid->value->verticies < VERTEXN;
+        vertex++) {
+        *vertex = vec_mul(*vertex, ASTEROID_SIZE_DECAY);
+    }
+
+    Vector direction1, direction2;
+    direction1 = rotate(asteroid->value->direction, 3.0/4.0 * 3.142);
+    direction2 = rotate(asteroid->value->direction, 5.0/4.0 * 3.142);
+    bound_asteroid_speeds(&direction1);
+    bound_asteroid_speeds(&direction2);
+
+    *asteroid->value = new_asteroid(asteroid->value->center,
+                                    asteroid->value->verticies,
+                                    direction1);
+    *child->value = new_asteroid(asteroid->value->center,
+                                 asteroid->value->verticies,
+                                 direction2);
+    asteroid->value->generation = oldgen - 1;
+    child->value->generation = oldgen - 1;
+
+    child->next = asteroid->next;
+    child->prev = asteroid;
+    asteroid->next = child;
+}
+
+
 void update_game(Game *game) {
     update_asteroids(game->asteroids, game->size);
     update_particle_manager(game->particlemanager);
     update_bullet_manager(game->bulletmanager);
-    game->ship.position =
-        wrap(game->size, vec_add(game->ship.position, game->ship.velocity));
 
     AsteroidNode* hit = bullet_hit(game->bulletmanager, game->asteroids);
     if (hit != NULL) {
-        if (hit == game->asteroids)
-            puts("T");
-        else
-            puts("F");
-        split_asteroid(hit);
+        split_asteroid(game, hit);
+        game->score += ASTEROID_SCORE;
     }
 
-    if (!game->ship.invincible &&
-        point_collides(game->asteroids, game->ship.position) != NULL) {
-        game->lives--;
-        game->ship.invincible = SHIP_INVINCIBLE;
-    }
-    if (game->ship.invincible)
+    if (game->ship.invincible) {
         game->ship.invincible--;
-
-    int c = 0;
-    AsteroidNode* n;
-    for(n = game->asteroids; n != NULL; n = n->next)
-        c++;
-    printf("A: %i L: %i I: %i\n", c, game->lives, game->ship.invincible);
+    } else {
+        game->ship.position =
+            wrap(game->size, vec_add(game->ship.position, game->ship.velocity));
+        if (point_collides(game->asteroids, game->ship.position) != NULL) {
+            game->lives--;
+            game->ship.invincible = SHIP_INVINCIBLE;
+            game->ship.position = vec_mul(game->size, 0.5);
+            game->ship.velocity = new_vector();
+            game->ship.angle = 0;
+        }
+    }
 }
 
 void draw_game(Game *game) {
@@ -152,12 +209,12 @@ void draw_game(Game *game) {
     draw_bullets(game->bulletmanager);
     draw_particles(game->particlemanager);
 
-    //    draw_hud(game);
+    draw_hud(game);
 }
 
 void draw_ship(Game *game) {
     // Flash the ship if it's invincible
-    if (game->ship.invincible % 30 > 2)
+    if (game->ship.invincible % 20 > 2)
         return;
 
     ALLEGRO_TRANSFORM trans;
@@ -175,8 +232,8 @@ void draw_ship(Game *game) {
 }
 
 void draw_hud(Game *game) {
-    char buffer[80];
-    sprintf(buffer, "%i", game->score);
+    char buffer[10];
+    snprintf(buffer, sizeof(char[10]), "%d", game->score);
     al_draw_text(ttf_font, HUD_COLOR, 0, 0, ALLEGRO_ALIGN_LEFT,
                  buffer);
 }

@@ -16,6 +16,7 @@
 #define SHIP_COLOR al_map_rgb(255, 255, 255)
 #define BACKGROUND_COLOR al_map_rgb(0, 0, 0)
 #define HUD_COLOR al_map_rgb(255, 255, 255)
+#define ASTEROID_SCORE 100
 
 // Initialises and loads fonts
 bool init_font();
@@ -59,6 +60,9 @@ void rotate_ship_right(Game*);
 void accelerate_ship(Game*);
 // Decelerates the ship
 void deccelerate_ship(Game*);
+// Splits an asteroid in two, removes it from the list, and adds the
+// new ones to the list
+void split_asteroid(Game*, AsteroidNode*);
 
 // Updates the gamestate for a single frame
 void update_game(Game*);

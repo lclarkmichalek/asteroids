@@ -10,6 +10,8 @@
 #define ASTEROID_COLOR al_map_rgb(255, 255, 255)
 #define ASTEROID_INVINCIBLE 30
 #define ASTEROID_SPEED 1
+#define MAX_GENERATION 3
+#define ASTEROID_SIZE_DECAY 0.7
 
 typedef struct Asteroid {
     // The position vectors of the verticies, relative to the center
@@ -27,6 +29,9 @@ typedef struct Asteroid {
 
     // How many frames the asteroid is invincible for
     char invincible;
+
+    // The "generation" of asteroid this is
+    char generation;
 } Asteroid;
 
 // Creates a new Asteroid at the given position, with the given verticies
@@ -38,7 +43,7 @@ void delete_asteroid(Asteroid*);
 bool point_in_asteroid(Vector, Asteroid*);
 
 struct AsteroidNode {
-    struct AsteroidNode* next;
+    struct AsteroidNode *next, *prev;
     Asteroid* value;
 };
 typedef struct AsteroidNode AsteroidNode;
@@ -53,9 +58,6 @@ void delete_asteroid_list(AsteroidNode*);
 AsteroidNode* point_collides(AsteroidNode*, Vector);
 // Updates the positions of the asteroids for one frame
 void update_asteroids(AsteroidNode*, Vector);
-// Splits an asteroid in two, removes it from the list, and adds the
-// new ones to the list
-void split_asteroid(AsteroidNode*);
 // Draws the asteroids on the screen
 void draw_asteroids(AsteroidNode*);
 

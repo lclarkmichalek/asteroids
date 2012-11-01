@@ -29,6 +29,8 @@ void update_bullet_manager(BulletManager* bm) {
 void shoot_bullet(BulletManager* bm, Ship ship) {
     if (bm->pm.current_frame - bm->last_shot < SHOT_DELAY)
         return;
+    if (ship.invincible != 0)
+        return;
     bm->last_shot = bm->pm.current_frame;
     Vector velocity = {
         -sin(-ship.angle) * BULLET_SPEED,
