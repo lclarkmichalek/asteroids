@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include <allegro5/allegro_primitives.h>
+
 #include "./asteroid.h"
 #include "./vector.h"
 
@@ -138,4 +140,33 @@ void split_asteroid(AsteroidNode* asteroid) {
     asteroid->prev->next = child1;
     asteroid->next->prev = child2;
     free(asteroid);
+}
+
+void rotate_around(ALLEGRO_TRANSFORM *trans, Vector p, float angle) {
+  al_identity_transform(trans);
+  al_translate_transform(trans,
+			 p.x,
+			 p.y);
+  al_rotate_transform(trans, angle);
+  al_translate_transform(trans,
+			 p.x,
+			 p.y);
+}
+
+void draw_asteroids(AsteroidNode* n) {
+  ALLEGRO_TRANSFORM trans;
+  for(; n != NULL; n = n->next) {
+    rotate_around(&trans, n->value->center, n->value->angle);
+    al_use_transform(&trans);
+
+    Vector *a, *b;
+    b = n->value->verticies[VERTEXN - 1];
+    for(a = n->value->verticies;
+	a - n->value->verticies < VERTEXN;
+	b = a, a++) {
+      al_draw_line(a->x, a->y, b->x, b->y, ASTEROID_COLOR, 1);
+    }
+  }
+  al_identitiy_transform(trans);
+  al_use_transform(&trans);
 }

@@ -53,5 +53,7 @@ void update_asteroids(AsteroidNode*);
 // Splits an asteroid in two, removes it from the list, and adds the
 // new ones to the list
 void split_asteroid(AsteroidNode*);
+// Draws the asteroids on the screen
+void draw_asteroids(AsteroidNode*);
 
 #endif
