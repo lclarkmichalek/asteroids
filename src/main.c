@@ -35,7 +35,8 @@ int main() {
 
     Vector size = {al_get_display_width(display),
                    al_get_display_height(display),
-                   0};
+                   0
+                  };
 
     Game* game = new_game(size);
     spawn_asteroid(game);
@@ -104,7 +105,7 @@ int main() {
         case ALLEGRO_EVENT_KEY_CHAR:
             if (event->keyboard.keycode == ALLEGRO_KEY_SPACE)
                 shoot_bullet(game->bulletmanager, game->ship);
-             break;
+            break;
         }
     }
 

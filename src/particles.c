@@ -31,7 +31,7 @@ void update_particle_manager(ParticleManager* pm) {
     Particle* particle;
     for(particle = pm->particles;
             (particle - pm->particles) < PARTICLEN;
-        particle++) {
+            particle++) {
         if (particle->alive)
             particle->position = vec_add(particle->position, particle->velocity);
     }

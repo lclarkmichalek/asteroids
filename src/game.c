@@ -59,7 +59,8 @@ void spawn_asteroid(Game *g) {
         {-50, -100, 0},
         {25, -100, 0},
         {100, -50, 0},
-        {100, -25, 0}};
+        {100, -25, 0}
+    };
     Vector pos = {0, 0, 0};
     Vector dir = {1, 3, 0};
 
@@ -149,8 +150,8 @@ void split_asteroid(Game* game, AsteroidNode *asteroid) {
 
     Vector* vertex;
     for(vertex = asteroid->value->verticies;
-        vertex - asteroid->value->verticies < VERTEXN;
-        vertex++) {
+            vertex - asteroid->value->verticies < VERTEXN;
+            vertex++) {
         *vertex = vec_mul(*vertex, ASTEROID_SIZE_DECAY);
     }
 
@@ -186,7 +187,7 @@ void update_game(Game *game) {
         char n;
         for (n = 0; n < ASTEROID_PARTICLEN; n++) {
             float angle = (float)drand48() * 2 * 3.142;
-            float mag = (float) drand48() * 2;
+            float mag = (float)drand48() * 2;
             Vector direction =  vec_mul(rotate(unit, angle), mag);
             add_particle(game->particlemanager,
                          hit->value->center, direction, 60);

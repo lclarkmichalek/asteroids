@@ -51,7 +51,7 @@ bool in_triangle(Vector point, Vector a, Vector b, Vector c) {
 
 bool point_in_asteroid(Vector p, Asteroid* asteroid) {
     if (magnitude_squared(vec_sub(p, asteroid->center)) >
-        asteroid->radius_squared)
+            asteroid->radius_squared)
         return false;
 
     Vector *a, *b;
@@ -91,8 +91,8 @@ AsteroidNode* point_collides(AsteroidNode* asteroids, Vector point) {
 void update_asteroids(AsteroidNode* asteroids, Vector size) {
     AsteroidNode *node;
     for(node = asteroids;
-        node != NULL;
-        node = node->next) {
+            node != NULL;
+            node = node->next) {
         if (node->value->invincible)
             node->value->invincible--;
         node->value->center = wrap(size,
@@ -111,8 +111,8 @@ void draw_asteroids(AsteroidNode* n) {
         Vector *a, *b;
         b = &n->value->verticies[VERTEXN - 1];
         for(a = n->value->verticies;
-            a - n->value->verticies < VERTEXN;
-            b = a, a++) {
+                a - n->value->verticies < VERTEXN;
+                b = a, a++) {
             al_draw_line(a->x, a->y, b->x, b->y, ASTEROID_COLOR, 2);
         }
     }

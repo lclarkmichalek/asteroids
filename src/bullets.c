@@ -43,7 +43,7 @@ void shoot_bullet(BulletManager* bm, Ship ship) {
 AsteroidNode* bullet_hit(BulletManager* bm, AsteroidNode* asteroids) {
     Particle* bullet;
     for(bullet = bm->pm.particles;
-        bullet - bm->pm.particles < PARTICLEN; bullet++) {
+            bullet - bm->pm.particles < PARTICLEN; bullet++) {
         if (bullet->alive) {
             AsteroidNode* node = point_collides(asteroids, bullet->position);
             if (node) {
