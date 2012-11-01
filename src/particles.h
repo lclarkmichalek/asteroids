@@ -6,6 +6,7 @@
 #include "./vector.h"
 
 #define PARTICLEN 256
+
 typedef struct Particle {
     // The position of the particle
     Vector position;

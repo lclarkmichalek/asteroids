@@ -6,6 +6,7 @@
 #include "./asteroid.h"
 
 #define BULLET_LIFETIME 120
+#define BULLET_COLOR al_map_rgb(255, 255, 255)
 
 typedef ParticleManager BulletManager;
 
@@ -19,5 +20,7 @@ void update_bullet_manager(BulletManager*);
 void shoot_bullet(BulletManager*, Ship);
 // Returns true if any bullet is inside an asteroid
 AsteroidNode* bullet_hit(BulletManager*, AsteroidNode*);
+// Draws the bullets to the screen
+void draw_bullets(BulletManager*);
 
 #endif
