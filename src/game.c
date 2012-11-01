@@ -3,6 +3,7 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_ttf.h>
 
 #include "./asteroid.h"
 #include "./particles.h"
@@ -79,4 +80,11 @@ void draw_ship(Game *game) {
   al_draw_line(0, -11, 8, 9, SHIP_COLOR, 3.0f);
   al_draw_line(-6, 4, -1, 4, SHIP_COLOR, 3.0f);
   al_draw_line(6, 4, 1, 4, SHIP_COLOR, 3.0f);
+}
+
+void draw_hud(Game *game) {
+  char buffer[80];
+  sprintf(buffer, "%i", game->score);
+  al_draw_text(ttf_font, HUD_COLOR, 0, 0, ALLEGRO_ALIGN_LEFT,
+	       buffer);
 }
