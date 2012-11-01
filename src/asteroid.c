@@ -82,7 +82,7 @@ void delete_asteroid_list(AsteroidNode* n) {
     }
 }
 
-void preappend_asteroid_list(AsteroidNode* al, AsteroidNode* n) {
+void prepend_asteroid_list(AsteroidNode* al, AsteroidNode* n) {
     n->next = al;
     n->prev = NULL;
     al->prev = n;
@@ -101,8 +101,8 @@ AsteroidNode* point_collides(AsteroidNode* asteroids, Vector point) {
 void update_asteroids(AsteroidNode* asteroids) {
     AsteroidNode *node;
     for(node = asteroids;
-            node != NULL;
-            node = node->next) {
+        node != NULL;
+        node = node->next) {
         node->value->center = vec_add(node->value->center,
                                       node->value->direction);
         node->value->angle += ASTEROID_ROTATION_SPEED;
@@ -118,8 +118,8 @@ void split_asteroid(AsteroidNode* asteroid) {
 
     Vector* vertex;
     for(vertex = asteroid->value->verticies;
-            vertex - asteroid->value->verticies < VERTEXN;
-            vertex++) {
+        vertex - asteroid->value->verticies < VERTEXN;
+        vertex++) {
         *vertex = vec_mul(*vertex, 0.5);
     }
 
@@ -158,6 +158,4 @@ void draw_asteroids(AsteroidNode* n) {
             al_draw_line(a->x, a->y, b->x, b->y, ASTEROID_COLOR, 1);
         }
     }
-    al_identity_transform(&trans);
-    al_use_transform(&trans);
 }

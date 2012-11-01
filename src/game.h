@@ -60,4 +60,5 @@ void draw_game(Game*);
 void draw_ship(Game*);
 // Draws the hud
 void draw_hud(Game*);
+
 #endif

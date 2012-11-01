@@ -31,6 +31,7 @@ int main() {
     }
 
     Game* game = new_game(size);
+    spawn_asteroid(game);
 
     ALLEGRO_TIMER* timer = al_create_timer(1.0/FPS);
 

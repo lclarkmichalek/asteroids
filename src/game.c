@@ -18,7 +18,8 @@
 ALLEGRO_FONT *ttf_font = NULL;
 
 bool init_font() {
-    if (!init_font())
+    al_init_font_addon();
+    if (!al_init_ttf_addon())
         return 1;
     ttf_font = al_load_ttf_font("font.ttf", 30, 0);
     return !ttf_font;
@@ -42,6 +43,39 @@ void delete_game(Game *g) {
     delete_particle_manager(g->particlemanager);
     delete_bullet_manager(g->bulletmanager);
     free(g);
+}
+
+void spawn_asteroid(Game *g) {
+    Vector verts[VERTEXN] = {
+        {0, 0, 0},
+        {20, 10, 0},
+        {10, 20, 0},
+        {0, 15, 0},
+        {-20, 20, 0},
+        {-25, 5, 0},
+        {-25, -10, 0},
+        {-5, -10, 0},
+        {-10, -20, 0},
+        {5, -20, 0},
+        {20, -10, 0},
+        {20, -5, 0}};
+    Vector pos = {0, 0, 0};
+    Vector dir = {1, 3, 0};
+
+    Asteroid *a = malloc(sizeof(Asteroid));
+    *a = new_asteroid(pos, verts, dir);
+    AsteroidNode *n = malloc(sizeof(AsteroidNode));
+    n->value = a;
+
+    // Insert at start
+    n->prev = NULL;
+    if (g->asteroids == NULL) {
+        g->asteroids = n;
+        n->next = NULL;
+    } else {
+        n->next = g->asteroids;
+        g->asteroids = n;
+    }
 }
 
 void rotate_ship_left(Game *game) {
@@ -74,7 +108,7 @@ void draw_game(Game *game) {
     draw_bullets(game->bulletmanager);
     draw_particles(game->particlemanager);
 
-    draw_hud(game);
+    //    draw_hud(game);
 }
 
 void draw_ship(Game *game) {
