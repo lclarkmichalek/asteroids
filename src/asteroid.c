@@ -58,7 +58,7 @@ bool point_in_asteroid(Vector p, Asteroid* asteroid) {
     b = asteroid->verticies + VERTEXN - 1; // last element
     a = asteroid->verticies;
     while(a - asteroid->verticies < VERTEXN) {
-        if (in_triangle(p, *a, *b, asteroid->center)) {
+        if (in_triangle(p, *a, *b, vec_sub(p, asteroid->center))) {
             return true;
         }
         b = a;
