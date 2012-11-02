@@ -60,7 +60,7 @@ void draw_bullets(BulletManager *bm) {
         if (b->alive) {
             Vector p2 = vec_add(b->position, vec_mul(b->velocity, 1));
             al_draw_line(b->position.x, b->position.y, p2.x, p2.y,
-                         BULLET_COLOR, 1);
+                         BULLET_COLOR, 2);
         }
     }
 }
