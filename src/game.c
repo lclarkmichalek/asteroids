@@ -228,6 +228,8 @@ void update_particles(Game *game) {
         if (particle->alive)
             particle->position = wrap(game->size,
                                       vec_add(particle->position, particle->velocity));
+        if (particle->created + particle->lifetime < bm->current_frame)
+          particle->alive = false;
     }
 
     pm->current_frame++;
@@ -237,6 +239,8 @@ void update_particles(Game *game) {
         if (particle->alive)
             particle->position = wrap(game->size,
                                       vec_add(particle->position, particle->velocity));
+        if (particle->created + particle->lifetime < pm->current_frame)
+          particle->alive = false;
     }
 
 }
