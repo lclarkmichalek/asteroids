@@ -178,8 +178,7 @@ void split_asteroid(Game* game, AsteroidNode *asteroid) {
 
 void update_game(Game *game) {
     update_asteroids(game->asteroids, game->size);
-    update_particle_manager(game->particlemanager);
-    update_bullet_manager(game->bulletmanager);
+    update_particles(game);
 
     AsteroidNode* hit = bullet_hit(game->bulletmanager, game->asteroids);
     if (hit != NULL) {
@@ -214,6 +213,32 @@ void update_ship(Game* game) {
         }
     }
     game->ship.velocity = vec_mul(game->ship.velocity, 1 - SHIP_FRICTION);
+}
+
+void update_particles(Game *game) {
+    ParticleManager *pm, *bm;
+    pm = game->particlemanager;
+    bm = &game->bulletmanager->pm;
+
+    bm->current_frame++;
+    Particle* particle;
+    for(particle = bm->particles;
+            (particle - bm->particles) < PARTICLEN;
+            particle++) {
+        if (particle->alive)
+            particle->position = wrap(game->size,
+                                      vec_add(particle->position, particle->velocity));
+    }
+
+    pm->current_frame++;
+    for(particle = pm->particles;
+            (particle - pm->particles) < PARTICLEN;
+            particle++) {
+        if (particle->alive)
+            particle->position = wrap(game->size,
+                                      vec_add(particle->position, particle->velocity));
+    }
+
 }
 
 void draw_game(Game *game) {

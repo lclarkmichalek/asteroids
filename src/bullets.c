@@ -22,10 +22,6 @@ void delete_bullet_manager(BulletManager* bm) {
     delete_particle_manager(&bm->pm);
 }
 
-void update_bullet_manager(BulletManager* bm) {
-    update_particle_manager(&bm->pm);
-}
-
 void shoot_bullet(BulletManager* bm, Ship ship) {
     if (bm->pm.current_frame - bm->last_shot < SHOT_DELAY)
         return;

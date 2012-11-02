@@ -32,9 +32,6 @@ typedef struct ParticleManager {
 ParticleManager* new_particle_manager();
 // Frees the memory held by the ParticleManager
 void delete_particle_manager(ParticleManager*);
-// Updates the particles in the ParticleManager.
-// Must be called once and only once per frame
-void update_particle_manager(ParticleManager*);
 // Adds a particle to the particle manager with the given position, direction and lifetime
 void add_particle(ParticleManager*, Vector, Vector, uint);
 

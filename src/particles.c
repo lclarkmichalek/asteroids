@@ -26,17 +26,6 @@ void delete_particle_manager(ParticleManager* pm) {
     free(pm);
 }
 
-void update_particle_manager(ParticleManager* pm) {
-    pm->current_frame++;
-    Particle* particle;
-    for(particle = pm->particles;
-            (particle - pm->particles) < PARTICLEN;
-            particle++) {
-        if (particle->alive)
-            particle->position = vec_add(particle->position, particle->velocity);
-    }
-}
-
 // Finds a 'dead' particle; either a particle that has expired, or the oldest particle
 // in the particle manager
 Particle* find_dead_particle(ParticleManager* pm) {

@@ -70,6 +70,9 @@ void split_asteroid(Game*, AsteroidNode*);
 void update_game(Game*);
 // Updates the ship
 void update_ship(Game*);
+// Updates the particle managers
+void update_particles(Game*);
+
 // Draws the game
 void draw_game(Game*);
 // Draws the spaceship
