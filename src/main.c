@@ -102,10 +102,10 @@ int main() {
             break;
         }
 
-        case ALLEGRO_EVENT_KEY_CHAR:
+          /*        case ALLEGRO_EVENT_KEY_CHAR:
             if (event->keyboard.keycode == ALLEGRO_KEY_SPACE)
                 shoot_bullet(game->bulletmanager, game->ship);
-            break;
+                break;*/
         }
     }
 
