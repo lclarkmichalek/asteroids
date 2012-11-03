@@ -72,6 +72,20 @@ void delete_asteroid_node(AsteroidNode* n) {
     free(n);
 }
 
+bool is_list_consistent(AsteroidNode* asteroids) {
+  AsteroidNode *prev, *current;
+  prev = NULL;
+  for(current = asteroids;
+      current != NULL;
+      prev = current, current = current->next) {
+    if (current->prev != prev)
+      return false;
+    if ((int)current->value < 100)
+      return false;
+  }
+  return true;
+}
+
 void delete_asteroid_list(AsteroidNode* n) {
     for(; n != NULL; n = n->next) {
         delete_asteroid_node(n);

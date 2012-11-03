@@ -50,6 +50,8 @@ typedef struct AsteroidNode AsteroidNode;
 
 // Frees the memory used by the AsteroidNode. Also calls delete_asteroid on the linked asteroid
 void delete_asteroid_node(AsteroidNode*);
+// Returns true if the asteroid list is consistent (i.e. all next and prev ptrs are good)
+bool is_list_consistent(AsteroidNode*);
 
 // Calls delete_asteroid_node on each element of the Asteroid list
 void delete_asteroid_list(AsteroidNode*);
