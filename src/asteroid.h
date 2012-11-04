@@ -52,6 +52,10 @@ typedef struct AsteroidNode AsteroidNode;
 void delete_asteroid_node(AsteroidNode*);
 // Returns true if the asteroid list is consistent (i.e. all next and prev ptrs are good)
 bool is_list_consistent(AsteroidNode*);
+// Adds an element to the asteroid list
+void insert_in_asteroid_list(AsteroidNode**, AsteroidNode*);
+// Removes an element from the asteroid list
+void remove_from_asteroid_list(AsteroidNode**, AsteroidNode*);
 
 // Calls delete_asteroid_node on each element of the Asteroid list
 void delete_asteroid_list(AsteroidNode*);
@@ -62,5 +66,8 @@ AsteroidNode* point_collides(AsteroidNode*, Vector);
 void update_asteroids(AsteroidNode*, Vector);
 // Draws the asteroids on the screen
 void draw_asteroids(AsteroidNode*);
+// Splits an asteroid in two, removes it from the list, and adds the
+// new ones to the list
+void split_asteroid(AsteroidNode**, AsteroidNode*);
 
 #endif

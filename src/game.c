@@ -119,66 +119,12 @@ void deccelerate_ship(Game *game) {
     bound_ship_speeds(game);
 }
 
-void bound_asteroid_speeds(Vector *v) {
-    if (v->x < -ASTEROID_SPEED)
-        v->x = -ASTEROID_SPEED;
-    if (v->x > ASTEROID_SPEED)
-        v->x = ASTEROID_SPEED;
-    if (v->y < -ASTEROID_SPEED)
-        v->y = -ASTEROID_SPEED;
-    if (v->y > ASTEROID_SPEED)
-        v->y = ASTEROID_SPEED;
-}
-
-void split_asteroid(Game* game, AsteroidNode *asteroid) {
-    char oldgen = asteroid->value->generation;
-    if (oldgen - 1 < 0) {
-        if (asteroid->prev)
-            asteroid->prev->next = asteroid->next;
-        else
-            game->asteroids = asteroid->next;
-        if (asteroid->next)
-            asteroid->next->prev = asteroid->prev;
-        free(asteroid->value);
-        free(asteroid);
-        return;
-    }
-
-    AsteroidNode *child;
-    child = malloc(sizeof(AsteroidNode));
-    child->value = malloc(sizeof(Asteroid));
-
-    Vector* vertex;
-    for(vertex = asteroid->value->verticies;
-            vertex - asteroid->value->verticies < VERTEXN;
-            vertex++) {
-        *vertex = vec_mul(*vertex, ASTEROID_SIZE_DECAY);
-    }
-
-    Vector direction1, direction2;
-    direction1 = rotate(asteroid->value->direction, 3.0/4.0 * 3.142);
-    direction2 = rotate(asteroid->value->direction, 5.0/4.0 * 3.142);
-    bound_asteroid_speeds(&direction1);
-    bound_asteroid_speeds(&direction2);
-
-    *asteroid->value = new_asteroid(asteroid->value->center,
-                                    asteroid->value->verticies,
-                                    direction1);
-    *child->value = new_asteroid(asteroid->value->center,
-                                 asteroid->value->verticies,
-                                 direction2);
-    asteroid->value->generation = oldgen - 1;
-    child->value->generation = oldgen - 1;
-
-    child->next = asteroid->next;
-    child->prev = asteroid;
-    asteroid->next = child;
-}
-
-
 void update_game(Game *game) {
     update_asteroids(game->asteroids, game->size);
     update_particles(game);
+
+    if (!is_list_consistent(game->asteroids))
+        puts("Inconsistent");
 
     AsteroidNode* hit = bullet_hit(game->bulletmanager, game->asteroids);
     if (hit != NULL) {
@@ -191,7 +137,7 @@ void update_game(Game *game) {
             add_particle(game->particlemanager,
                          hit->value->center, direction, 60);
         }
-        split_asteroid(game, hit);
+        split_asteroid(&game->asteroids, hit);
         game->score += ASTEROID_SCORE;
     }
 

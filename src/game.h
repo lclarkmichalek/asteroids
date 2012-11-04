@@ -62,9 +62,6 @@ void rotate_ship_right(Game*);
 void accelerate_ship(Game*);
 // Decelerates the ship
 void deccelerate_ship(Game*);
-// Splits an asteroid in two, removes it from the list, and adds the
-// new ones to the list
-void split_asteroid(Game*, AsteroidNode*);
 
 // Updates the gamestate for a single frame
 void update_game(Game*);
