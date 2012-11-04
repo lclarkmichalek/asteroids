@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-c -Wall -Wextra -Werror -g
+CFLAGS=-c -Wall -Wextra -Werror -g -fPIC
 LDFLAGS=-lallegro -lallegro_primitives -lallegro_font -lallegro_ttf -lm
 SOURCES= \
 	src/vector.c src/particles.c src/asteroid.c \
@@ -27,3 +27,7 @@ clean:
 
 tags:
 	ctags -o TAGS -e $(HEADERS) $(SOURCES)
+
+test: $(OBJECTS)
+	$(CC) -shared -Wl,-soname,lib$(EXECUTABLE).so -o lib$(EXECUTABLE).so $(OBJECTS) $(LDFLAGS)
+	nosetests3
