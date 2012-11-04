@@ -56,6 +56,8 @@ bool is_list_consistent(AsteroidNode*);
 void insert_in_asteroid_list(AsteroidNode**, AsteroidNode*);
 // Removes an element from the asteroid list
 void remove_from_asteroid_list(AsteroidNode**, AsteroidNode*);
+// Returns the length of the list
+int count_asteroids(AsteroidNode*);
 
 // Calls delete_asteroid_node on each element of the Asteroid list
 void delete_asteroid_list(AsteroidNode*);

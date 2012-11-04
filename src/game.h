@@ -23,6 +23,10 @@
 // Initialises and loads fonts
 bool init_font();
 
+typedef enum {
+    Won, Lost, Paused, Quit, Playing
+} GameStatus;
+
 typedef struct Game {
     // The currently displayed asteroids
     AsteroidNode* asteroids;
@@ -44,6 +48,9 @@ typedef struct Game {
 
     // The game size
     Vector size;
+
+    // The status of the game
+    GameStatus status;
 } Game;
 
 // Creates a new empty game with the given screen size

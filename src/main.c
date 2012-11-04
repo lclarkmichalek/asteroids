@@ -55,12 +55,11 @@ int main() {
     al_start_timer(timer); // Start generating timer events
     ALLEGRO_EVENT* event = malloc(sizeof(ALLEGRO_EVENT));
 
-    bool running = true;
-    while (running) {
+    while (game->status == Playing) {
         al_get_keyboard_state(keys);
 
         if (al_key_down(keys, ALLEGRO_KEY_ESCAPE))
-            running = false;
+            game->status = Paused;
         if (al_key_down(keys, ALLEGRO_KEY_LEFT))
             rotate_ship_left(game);
         if (al_key_down(keys, ALLEGRO_KEY_RIGHT))
@@ -84,28 +83,21 @@ int main() {
             break;
 
         case ALLEGRO_EVENT_DISPLAY_CLOSE:
-            running = false;
+            game->status = Quit;
             break;
 
-        case ALLEGRO_EVENT_TIMER: {
-            int oldlives = game->lives;
+        case ALLEGRO_EVENT_TIMER:
             update_game(game);
-            if (game->lives != oldlives) {
-                puts("Restaring game");
-            }
-            if (game->lives < 0)
-                running = false;
 
             draw_game(game);
 
             al_flip_display();
             break;
-        }
 
-        /*        case ALLEGRO_EVENT_KEY_CHAR:
-          if (event->keyboard.keycode == ALLEGRO_KEY_SPACE)
-              shoot_bullet(game->bulletmanager, game->ship);
-              break;*/
+            /*        case ALLEGRO_EVENT_KEY_CHAR:
+              if (event->keyboard.keycode == ALLEGRO_KEY_SPACE)
+                  shoot_bullet(game->bulletmanager, game->ship);
+                  break;*/
         }
     }
 

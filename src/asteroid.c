@@ -110,6 +110,12 @@ void insert_in_asteroid_list(AsteroidNode **list, AsteroidNode *node) {
     *list = node;
 }
 
+int count_asteroids(AsteroidNode* n) {
+    int c;
+    for(c = 0; n != NULL; n = n->next, c++);
+    return c;
+}
+
 AsteroidNode* point_collides(AsteroidNode* asteroids, Vector point) {
     AsteroidNode *node = asteroids;
     for(; node != NULL; node = node->next) {

@@ -36,6 +36,7 @@ Game* new_game(Vector size) {
 
     game->score = 0;
     game->lives = LIVESN;
+    game->status = Playing;
     return game;
 }
 
@@ -120,6 +121,9 @@ void deccelerate_ship(Game *game) {
 }
 
 void update_game(Game *game) {
+    if (game->status != Playing)
+        return;
+
     update_asteroids(game->asteroids, game->size);
     update_particles(game);
 
@@ -142,6 +146,11 @@ void update_game(Game *game) {
     }
 
     update_ship(game);
+
+    if (game->lives < 0)
+        game->status = Lost;
+    else if (!count_asteroids(game->asteroids))
+        game->status = Won;
 }
 
 void update_ship(Game* game) {
