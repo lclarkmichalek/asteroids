@@ -3,6 +3,24 @@ Asteroids Game
 
 Implementing lab 3 of chapter 12 of Head First C.
 
+Dependencies
+============
+
+Allegro v5.0.x
+GNU compatible make
+gcc/clang
+
+Optional
+--------
+
+astyle for source formatting
+ctags for generating TAG files
+
+Building
+========
+
+make && ./asteroids
+
 Implementation
 ==============
 
