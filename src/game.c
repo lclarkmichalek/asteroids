@@ -154,7 +154,21 @@ void deccelerate_ship(Game *game) {
     bound_ship_speeds(game);
 }
 
+void emit_asteroid_hit_particles(ParticleManager *pm, Vector center) {
+    Vector unit = {0, 1, 0};
+    char n;
+    for (n = 0; n < ASTEROID_PARTICLEN; n++) {
+        float angle = (float)drand48() * 2 * 3.142;
+        float mag = (float)drand48() * 2;
+        Vector direction = vec_mul(rotate(unit, angle), mag);
+        add_particle(pm,
+                     center, direction, 60);
+    }
+}
+
 void update_game(Game *game) {
+    if (game->status == Paused)
+        update_paused(game);
     if (game->status != Playing)
         return;
 
@@ -165,16 +179,8 @@ void update_game(Game *game) {
         puts("Inconsistent");
 
     AsteroidNode* hit = bullet_hit(game->bulletmanager, game->asteroids);
-    if (hit != NULL) {
-        Vector unit = {0, 1, 0};
-        char n;
-        for (n = 0; n < ASTEROID_PARTICLEN; n++) {
-            float angle = (float)drand48() * 2 * 3.142;
-            float mag = (float)drand48() * 2;
-            Vector direction =  vec_mul(rotate(unit, angle), mag);
-            add_particle(game->particlemanager,
-                         hit->value->center, direction, 60);
-        }
+    if (hit != NULL && !hit->value->invincible) {
+        emit_asteroid_hit_particles(game->particlemanager, hit->value->center);
         split_asteroid(&game->asteroids, hit);
         game->score += ASTEROID_SCORE;
     }
@@ -232,6 +238,10 @@ void update_particles(Game *game) {
             particle->alive = false;
     }
 
+}
+
+void update_paused(Game *game) {
+    game->status = Paused;
 }
 
 void draw_game(Game *game) {

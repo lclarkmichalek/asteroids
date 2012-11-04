@@ -84,6 +84,8 @@ void update_game(Game*);
 void update_ship(Game*);
 // Updates the particle managers
 void update_particles(Game*);
+// Updates the game when it is paused
+void update_paused(Game*);
 
 // Draws the game
 void draw_game(Game*);
