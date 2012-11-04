@@ -119,7 +119,7 @@ int count_asteroids(AsteroidNode* n) {
 AsteroidNode* point_collides(AsteroidNode* asteroids, Vector point) {
     AsteroidNode *node = asteroids;
     for(; node != NULL; node = node->next) {
-        if (!node->value->invincible && point_in_asteroid(point, node->value)) {
+        if (point_in_asteroid(point, node->value)) {
             return node;
         }
     }
