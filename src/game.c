@@ -246,10 +246,6 @@ void draw_game(Game *game) {
 }
 
 void draw_ship(Game *game) {
-    // Flash the ship if it's invincible
-    if (game->ship.invincible % 20 > 2)
-        return;
-
     ALLEGRO_TRANSFORM trans;
     al_identity_transform(&trans);
     al_rotate_transform(&trans, game->ship.angle);
@@ -258,10 +254,12 @@ void draw_ship(Game *game) {
                            (int)game->ship.position.y);
     al_use_transform(&trans);
 
-    al_draw_line(-8, 9, 0, -11, SHIP_COLOR , 3.0f);
-    al_draw_line(0, -11, 8, 9, SHIP_COLOR, 3.0f);
-    al_draw_line(-6, 4, -1, 4, SHIP_COLOR, 3.0f);
-    al_draw_line(6, 4, 1, 4, SHIP_COLOR, 3.0f);
+    int width = !game->ship.invincible ? 2 : 4;
+
+    al_draw_line(-8, 9, 0, -11, SHIP_COLOR , width);
+    al_draw_line(0, -11, 8, 9, SHIP_COLOR, width);
+    al_draw_line(-6, 4, -1, 4, SHIP_COLOR, width);
+    al_draw_line(6, 4, 1, 4, SHIP_COLOR, width);
 }
 
 void draw_hud(Game *game) {

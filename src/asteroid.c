@@ -151,7 +151,8 @@ void draw_asteroids(AsteroidNode* n) {
         for(a = n->value->verticies;
                 a - n->value->verticies < VERTEXN;
                 b = a, a++) {
-            al_draw_line(a->x, a->y, b->x, b->y, ASTEROID_COLOR, 2);
+            int width = n->value->invincible ? 4 : 2;
+            al_draw_line(a->x, a->y, b->x, b->y, ASTEROID_COLOR, width);
         }
     }
 }
