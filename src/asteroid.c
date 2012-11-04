@@ -80,8 +80,6 @@ bool is_list_consistent(AsteroidNode* asteroids) {
       prev = current, current = current->next) {
     if (current->prev != prev)
       return false;
-    if ((int)current->value < 100)
-      return false;
   }
   return true;
 }
