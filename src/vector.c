@@ -14,7 +14,7 @@ Vector vec_add(Vector a, Vector b) {
     Vector c = new_vector();
     c.x = a.x + b.x;
     c.y = a.y + b.y;
-    c.z = a.z + b.z;
+    //    c.z = a.z + b.z;
     return c;
 }
 
@@ -22,7 +22,7 @@ Vector vec_sub(Vector a, Vector b) {
     Vector c = new_vector();
     c.x = a.x - b.x;
     c.y = a.y - b.y;
-    c.z = a.z - b.z;
+    //    c.z = a.z - b.z;
     return c;
 }
 
