@@ -43,65 +43,59 @@ int main() {
 
     ALLEGRO_TIMER* timer = al_create_timer(1.0/FPS);
 
-    ALLEGRO_EVENT_QUEUE* eq = al_create_event_queue();
-    if (!eq) {
+    ALLEGRO_EVENT_QUEUE *timereq = al_create_event_queue();
+    ALLEGRO_EVENT_QUEUE *genericeq = al_create_event_queue();
+    if (!timereq || !genericeq) {
         puts("Could not create allegro event queue");
         return 1;
     }
-    al_register_event_source(eq, al_get_timer_event_source(timer));
-    al_register_event_source(eq, al_get_keyboard_event_source());
-    al_register_event_source(eq, al_get_display_event_source(display));
+    al_register_event_source(timereq, al_get_timer_event_source(timer));
+
+    al_register_event_source(genericeq, al_get_keyboard_event_source());
+    al_register_event_source(genericeq, al_get_display_event_source(display));
 
     al_start_timer(timer); // Start generating timer events
-    ALLEGRO_EVENT* event = malloc(sizeof(ALLEGRO_EVENT));
+    ALLEGRO_EVENT *timerevent = malloc(sizeof(ALLEGRO_EVENT));
+    ALLEGRO_EVENT *genericevent = malloc(sizeof(ALLEGRO_EVENT));
 
-    while (game->status == Playing) {
+    while (game->status == Playing ||
+            game->status == Paused) {
         al_get_keyboard_state(keys);
 
-        if (al_key_down(keys, ALLEGRO_KEY_ESCAPE))
-            game->status = Paused;
-        if (al_key_down(keys, ALLEGRO_KEY_LEFT))
-            rotate_ship_left(game);
-        if (al_key_down(keys, ALLEGRO_KEY_RIGHT))
-            rotate_ship_right(game);
-        if (al_key_down(keys, ALLEGRO_KEY_UP))
-            accelerate_ship(game);
-        if (al_key_down(keys, ALLEGRO_KEY_DOWN))
-            deccelerate_ship(game);
-        if (al_key_down(keys, ALLEGRO_KEY_SPACE))
-            shoot_bullet(game->bulletmanager, game->ship);
 
-        al_wait_for_event(eq, NULL);
-        if (!al_get_next_event(eq, event)) {
-            continue;
-        }
-        switch(event->type) {
-        case ALLEGRO_EVENT_DISPLAY_RESIZE:
-            game->size.x = event->display.x;
-            game->size.y = event->display.y;
-            al_acknowledge_resize(display);
-            break;
+        al_wait_for_event(timereq, NULL);
+        al_get_next_event(timereq, timerevent);
+        // No need to fill up the queue if we are late drawing frames
+        al_flush_event_queue(timereq);
 
-        case ALLEGRO_EVENT_DISPLAY_CLOSE:
-            game->status = Quit;
-            break;
+        handle_key_status(game, keys);
 
-        case ALLEGRO_EVENT_TIMER:
-            update_game(game);
+        while(al_get_next_event(genericeq, genericevent))
+            switch(genericevent->type) {
+            case ALLEGRO_EVENT_KEY_DOWN:
+                handle_key_event(game, genericevent->keyboard.keycode);
+                break;
 
-            draw_game(game);
+            case ALLEGRO_EVENT_DISPLAY_RESIZE:
+                game->size.x = genericevent->display.x;
+                game->size.y = genericevent->display.y;
+                al_acknowledge_resize(display);
+                break;
 
-            al_flip_display();
-            break;
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                game->status = Quit;
+                break;
+            }
 
-            /*        case ALLEGRO_EVENT_KEY_CHAR:
-              if (event->keyboard.keycode == ALLEGRO_KEY_SPACE)
-                  shoot_bullet(game->bulletmanager, game->ship);
-                  break;*/
-        }
+        update_game(game);
+
+        draw_game(game);
+
+        al_flip_display();
     }
 
-    free(event);
+    free(timerevent);
+    free(genericevent);
     delete_game(game);
     return 0;
 }

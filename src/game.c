@@ -80,6 +80,40 @@ void spawn_asteroid(Game *g) {
     }
 }
 
+void handle_key_status(Game *game, ALLEGRO_KEYBOARD_STATE *keys) {
+    if (game->status == Playing) {
+        if (al_key_down(keys, ALLEGRO_KEY_LEFT))
+            rotate_ship_left(game);
+        if (al_key_down(keys, ALLEGRO_KEY_RIGHT))
+            rotate_ship_right(game);
+        if (al_key_down(keys, ALLEGRO_KEY_UP))
+            accelerate_ship(game);
+        if (al_key_down(keys, ALLEGRO_KEY_DOWN))
+            deccelerate_ship(game);
+        if (al_key_down(keys, ALLEGRO_KEY_SPACE))
+            shoot_bullet(game->bulletmanager, game->ship);
+
+    } else if (game->status == Paused) {
+
+    }
+}
+
+void handle_key_event(Game *game, int keycode) {
+    if (game->status == Playing) {
+        switch(keycode) {
+        case ALLEGRO_KEY_ESCAPE:
+            game->status = Paused;
+            break;
+        }
+    } else if (game->status == Paused) {
+        switch(keycode) {
+        case ALLEGRO_KEY_ESCAPE:
+            game->status = Playing;
+            break;
+        }
+    }
+}
+
 void rotate_ship_left(Game *game) {
     game->ship.angle -= SHIP_ROTATION_SPEED;
 }

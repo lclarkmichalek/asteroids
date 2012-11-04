@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#include <allegro5/allegro.h>
+
 #include "./vector.h"
 #include "./asteroid.h"
 #include "./particles.h"
@@ -61,6 +63,12 @@ void delete_game(Game*);
 void restart_game(Game*);
 // Spawns a new asteroid. The ship will _not_ be inside the asteroid.
 void spawn_asteroid(Game*);
+
+// Does the right thing (tm) with regards to key presses
+void handle_key_status(Game*, ALLEGRO_KEYBOARD_STATE*);
+// Handles key events (i.e. one off presses)
+void handle_key_event(Game*, int);
+
 // Rotates the ship left
 void rotate_ship_left(Game*);
 // Rotates the ship right
