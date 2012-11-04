@@ -24,3 +24,6 @@ format:
 clean:
 	rm ./asteroids
 	rm src/*.o
+
+tags:
+	ctags -o TAGS -e $(HEADERS) $(SOURCES)
