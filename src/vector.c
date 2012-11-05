@@ -66,3 +66,25 @@ Vector rotate(Vector v, float a) {
     c.z = 0; // Shh don't tell
     return c;
 }
+
+// Returns true if the point is inside the triangel a b c
+bool in_triangle(Vector p, Vector a, Vector b, Vector c) {
+    Vector ac, ab, ap;
+    ac = vec_sub(c, a);
+    ab = vec_sub(b, a);
+    ap = vec_sub(p, a);
+
+    int dotcc, dotcb, dotcp, dotbb, dotbp;
+    dotcc = dot_product(ac, ac);
+    dotcb = dot_product(ac, ab);
+    dotcp = dot_product(ac, ap);
+    dotbb = dot_product(ab, ab);
+    dotbp = dot_product(ab, ap);
+
+    float invdenom, u, v;
+    invdenom = 1.0f/ (dotcc * dotbb - dotcb * dotcb);
+    u = (dotbb * dotcp - dotcb * dotbp) * invdenom;
+    v = (dotcc * dotbp - dotcb * dotcp) * invdenom;
+
+    return (u >= 0) && (v >= 0) && (u + v <= 1);
+}

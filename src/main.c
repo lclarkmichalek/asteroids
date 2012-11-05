@@ -33,10 +33,9 @@ int main() {
         return 1;
     }
 
-    Vector size = {al_get_display_width(display),
-                   al_get_display_height(display),
-                   0
-                  };
+    Vector size = new_vector();
+    size.x = al_get_display_width(display);
+    size.y = al_get_display_height(display);
 
     Game* game = new_game(size);
     spawn_asteroid(game);

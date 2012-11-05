@@ -1,6 +1,8 @@
 #ifndef _VECTOR_H
 #define _VECTOR_H
 
+#include <stdbool.h>
+
 typedef unsigned int uint;
 
 typedef struct Vector {
@@ -25,5 +27,7 @@ int dot_product(Vector, Vector);
 Vector wrap(Vector, Vector);
 // Rotates the vector in 2 dimensions
 Vector rotate(Vector, float);
+// Returns true if the point is in the triangle denoted by the 3 vectors
+bool in_triangle(Vector, Vector, Vector, Vector);
 
 #endif

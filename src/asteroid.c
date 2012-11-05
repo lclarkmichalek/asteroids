@@ -5,6 +5,7 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_color.h>
 
 #include "./asteroid.h"
 #include "./vector.h"
@@ -36,19 +37,6 @@ void delete_asteroid(Asteroid* a) {
     free(a);
 }
 
-// Returns true if point1 and point2 are both on the same side of the line a b
-bool same_side(Vector point1, Vector point2, Vector a, Vector b) {
-    return dot_product(
-               cross_product(vec_sub(b, a), vec_sub(point1, a)),
-               cross_product(vec_sub(b, a), vec_sub(point2, a)));
-}
-
-// Returns true if the point is inside the triangel a b c
-bool in_triangle(Vector point, Vector a, Vector b, Vector c) {
-    return same_side(point, a, b, c) && same_side(point, b, a, c) &&
-           same_side(point, c, a, b);
-}
-
 bool point_in_asteroid(Vector p, Asteroid* asteroid) {
     if (magnitude_squared(vec_sub(p, asteroid->center)) >
             asteroid->radius_squared)
@@ -58,7 +46,7 @@ bool point_in_asteroid(Vector p, Asteroid* asteroid) {
     b = asteroid->verticies + VERTEXN - 1; // last element
     a = asteroid->verticies;
     while(a - asteroid->verticies < VERTEXN) {
-        if (in_triangle(p, *a, *b, vec_sub(p, asteroid->center))) {
+        if (in_triangle(vec_sub(p, asteroid->center), *a, *b, new_vector())) {
             return true;
         }
         b = a;
@@ -151,11 +139,14 @@ void draw_asteroids(AsteroidNode* n) {
 
         Vector *a, *b;
         b = &n->value->verticies[VERTEXN - 1];
+        float sat = 0.3;
         for(a = n->value->verticies;
                 a - n->value->verticies < VERTEXN;
                 b = a, a++) {
             int width = n->value->invincible ? 4 : 2;
             al_draw_line(a->x, a->y, b->x, b->y, ASTEROID_COLOR, width);
+            al_draw_line(a->x, a->y, 0, 0, al_color_hsv(0.75, sat, 0.75), 4);
+            sat += 0.5/VERTEXN;
         }
     }
 }
