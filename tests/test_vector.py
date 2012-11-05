@@ -1,13 +1,12 @@
 import ctypes
 import unittest
 
-from .dll import dll
+from .dll import *
 
 class TestVectorOperations(unittest.TestCase):
     def vector_equal(self, v1, v2):
         self.assertEqual(v1.x, v2.x)
         self.assertEqual(v1.y, v2.y)
-        self.assertEqual(v1.z, v2.z)
 
     def test_addition(self):
         a = dll.new_vector()
@@ -63,3 +62,28 @@ class TestVectorOperations(unittest.TestCase):
         a.z = 5
 
         self.assertEquals(50, dll.magnitude_squared(a))
+
+    def test_in_triangle(self):
+        a = Vector(-1, -1, 0)
+        b = Vector(-1, 1, 0)
+        c = Vector(1, 0, 0)
+        p = Vector(0, 0, 0)
+        self.assertTrue(dll.in_triangle(p, a, b, c))
+
+        a = Vector(-101, -101, 0)
+        b = Vector(-101, -99, 0)
+        c = Vector(-99, -100, 0)
+        p = Vector(-100, -100, 0)
+        self.assertTrue(dll.in_triangle(p, a, b, c))
+
+        a = Vector(0, 0, 0)
+        b = Vector(0, 0, 0)
+        c = Vector(1, 0, 0)
+        p = Vector(1, 1, 0)
+        self.assertFalse(dll.in_triangle(p, a, b, c))
+
+        a = Vector(-101, -101, 0)
+        b = Vector(-101, -99, 0)
+        c = Vector(-99, -100, 0)
+        p = Vector(100, 100, 0)
+        self.assertFalse(dll.in_triangle(p, a, b, c))
