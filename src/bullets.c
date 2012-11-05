@@ -41,7 +41,8 @@ AsteroidNode* bullet_hit(BulletManager* bm, AsteroidNode* asteroids) {
     for(bullet = bm->pm.particles;
             bullet - bm->pm.particles < PARTICLEN; bullet++) {
         if (bullet->alive) {
-            AsteroidNode* node = point_collides(asteroids, bullet->position);
+          Vector np = vec_add(bullet->position, bullet->velocity);
+          AsteroidNode* node = point_collides(asteroids, np);
             if (node) {
                 bullet->alive = false;
                 return node;
@@ -58,7 +59,7 @@ void draw_bullets(BulletManager *bm) {
     Particle *b;
     for(b = bm->pm.particles; b - bm->pm.particles < PARTICLEN; b++) {
         if (b->alive) {
-            Vector p2 = vec_add(b->position, vec_mul(b->velocity, 1));
+            Vector p2 = vec_sub(b->position, vec_mul(b->velocity, 1));
             al_draw_line(b->position.x, b->position.y, p2.x, p2.y,
                          BULLET_COLOR, 2);
         }
