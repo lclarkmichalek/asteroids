@@ -244,29 +244,29 @@ void update_paused(Game *game) {
 }
 
 void init_layer(Game *game, ALLEGRO_BITMAP **mask, float opacity) {
-  *mask = al_create_bitmap(game->size.x + 400, game->size.y + 400);
-  ALLEGRO_BITMAP *old = al_get_target_bitmap();
-  al_set_target_bitmap(*mask);
-  al_clear_to_color(al_map_rgba(0,0,0, 255 - (int)(opacity * 255)));
+    *mask = al_create_bitmap(game->size.x + 400, game->size.y + 400);
+    ALLEGRO_BITMAP *old = al_get_target_bitmap();
+    al_set_target_bitmap(*mask);
+    al_clear_to_color(al_map_rgba(0,0,0, 255 - (int)(opacity * 255)));
 
-  int b1, b2, b3;
-  al_get_blender(&b1, &b2, &b3);
-  al_set_blender(ALLEGRO_DEST_MINUS_SRC, ALLEGRO_ONE, ALLEGRO_ONE);
+    int b1, b2, b3;
+    al_get_blender(&b1, &b2, &b3);
+    al_set_blender(ALLEGRO_DEST_MINUS_SRC, ALLEGRO_ONE, ALLEGRO_ONE);
 
-  al_set_blender(b1, b2, b3);
-  al_set_target_bitmap(old);
+    al_set_blender(b1, b2, b3);
+    al_set_target_bitmap(old);
 }
 
 void draw_mask(ALLEGRO_BITMAP *mask) {
-  al_draw_bitmap(mask, -200, -200, 0);
+    al_draw_bitmap(mask, -200, -200, 0);
 
-  al_destroy_bitmap(mask);
+    al_destroy_bitmap(mask);
 }
 
 void draw_game(Game *game, float opacity) {
-  ALLEGRO_BITMAP *mask = NULL;
-  if (opacity != 1)
-    init_layer(game, &mask, opacity);
+    ALLEGRO_BITMAP *mask = NULL;
+    if (opacity != 1)
+        init_layer(game, &mask, opacity);
 
     al_clear_to_color(BACKGROUND_COLOR);
 
@@ -278,12 +278,12 @@ void draw_game(Game *game, float opacity) {
     draw_hud(game);
 
     if (opacity != 1)
-      draw_mask(mask);
+        draw_mask(mask);
 }
 
 void draw_paused(Game *game) {
-  game->status = Paused;
-  al_clear_to_color(al_map_rgba(0, 0, 0, 100));
+    game->status = Paused;
+    al_clear_to_color(al_map_rgba(0, 0, 0, 100));
 }
 
 void draw_ship(Game *game) {
