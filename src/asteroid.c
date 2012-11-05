@@ -139,14 +139,11 @@ void draw_asteroids(AsteroidNode* n) {
 
         Vector *a, *b;
         b = &n->value->verticies[VERTEXN - 1];
-        float sat = 0.3;
         for(a = n->value->verticies;
                 a - n->value->verticies < VERTEXN;
                 b = a, a++) {
             int width = n->value->invincible ? 4 : 2;
             al_draw_line(a->x, a->y, b->x, b->y, ASTEROID_COLOR, width);
-            al_draw_line(a->x, a->y, 0, 0, al_color_hsv(0.75, sat, 0.75), 4);
-            sat += 0.5/VERTEXN;
         }
     }
 }
