@@ -87,11 +87,14 @@ void update_particles(Game*);
 // Updates the game when it is paused
 void update_paused(Game*);
 
-// Draws the game
-void draw_game(Game*);
+// Draws the game. If the second argument is true, it will be drawn with
+// a transparent layer over it (for pause and scores etc)
+void draw_game(Game*, float);
 // Draws the spaceship
 void draw_ship(Game*);
 // Draws the hud
 void draw_hud(Game*);
+// Draws the pause menu
+void draw_paused(Game*);
 
 #endif

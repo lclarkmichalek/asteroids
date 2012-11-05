@@ -88,7 +88,7 @@ int main() {
 
         update_game(game);
 
-        draw_game(game);
+        draw_game(game, game->status == Paused ? 0.2 : 1);
 
         al_flip_display();
     }
