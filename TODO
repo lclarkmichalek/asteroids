@@ -27,4 +27,4 @@
     - Check game is still running
 
 - BUGS
-  - Entities are not wrapped around.
+  - Collision detection is still a bit jenky
