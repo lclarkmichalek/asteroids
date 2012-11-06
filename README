@@ -21,6 +21,11 @@ Building
 
 make && ./asteroids
 
+Controls
+========
+
+Movement with the arrow keys. Space to shoot. Escape to pause.
+
 Implementation
 ==============
 
