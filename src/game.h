@@ -23,6 +23,8 @@
 #define ASTEROID_PARTICLEN 20
 #define ASTEROIDN 8
 
+extern ALLEGRO_FONT *ttf_font;
+
 // Initialises and loads fonts
 bool init_font();
 

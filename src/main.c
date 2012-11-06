@@ -4,6 +4,7 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_ttf.h>
 
 #include "./game.h"
 
@@ -66,7 +67,6 @@ int main() {
             game->status == Paused) {
         al_get_keyboard_state(keys);
 
-
         al_wait_for_event(timereq, NULL);
         al_get_next_event(timereq, timerevent);
         // No need to fill up the queue if we are late drawing frames
@@ -98,6 +98,36 @@ int main() {
             draw_paused(game);
 
         al_flip_display();
+    }
+
+    while(game->status == Won ||
+            game->status == Lost) {
+        al_wait_for_event(timereq, NULL);
+        al_get_next_event(timereq, timerevent);
+        // No need to fill up the queue if we are late drawing frames
+        al_flush_event_queue(timereq);
+
+        draw_game(game, 0.2);
+        char *buffer;
+
+        if (game->status == Won)
+            buffer = "Congratulations, you won!";
+        else if (game->status == Lost)
+            buffer = "You lost";
+
+        int x, y;
+        x = (game->size.x - 50) / 2;
+        y = (game->size.y - 30) / 2;
+        al_draw_text(ttf_font, al_map_rgb(200, 200, 200), x, y,
+                     ALLEGRO_ALIGN_LEFT, buffer);
+        al_flip_display();
+        while(al_get_next_event(genericeq, genericevent))
+            switch(genericevent->type) {
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+            case ALLEGRO_EVENT_KEY_DOWN:
+                game->status = Quit;
+                break;
+            }
     }
 
     free(timerevent);
