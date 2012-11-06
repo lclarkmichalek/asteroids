@@ -63,8 +63,7 @@ int main() {
     ALLEGRO_EVENT *timerevent = malloc(sizeof(ALLEGRO_EVENT));
     ALLEGRO_EVENT *genericevent = malloc(sizeof(ALLEGRO_EVENT));
 
-    while (game->status == Playing ||
-            game->status == Paused) {
+    while (game->status != Quit) {
         al_get_keyboard_state(keys);
 
         al_wait_for_event(timereq, NULL);
@@ -93,41 +92,24 @@ int main() {
 
         update_game(game);
 
-        draw_game(game, game->status == Paused ? 0.2 : 1);
-        if (game->status == Paused)
-            draw_paused(game);
+        draw_game(game, game->status == Playing ? 1 : 0.2);
+        switch(game->status) {
+        case Playing:
+          break;
+        case Paused:
+          draw_paused(game);
+          break;
+        case Won:
+          draw_won(game);
+          break;
+        case Lost:
+          draw_lost(game);
+          break;
+        default:
+          break;
+        }
 
         al_flip_display();
-    }
-
-    while(game->status == Won ||
-            game->status == Lost) {
-        al_wait_for_event(timereq, NULL);
-        al_get_next_event(timereq, timerevent);
-        // No need to fill up the queue if we are late drawing frames
-        al_flush_event_queue(timereq);
-
-        draw_game(game, 0.2);
-        char *buffer;
-
-        if (game->status == Won)
-            buffer = "Congratulations, you won!";
-        else if (game->status == Lost)
-            buffer = "You lost";
-
-        int x, y;
-        x = (game->size.x - 50) / 2;
-        y = (game->size.y - 30) / 2;
-        al_draw_text(ttf_font, al_map_rgb(200, 200, 200), x, y,
-                     ALLEGRO_ALIGN_LEFT, buffer);
-        al_flip_display();
-        while(al_get_next_event(genericeq, genericevent))
-            switch(genericevent->type) {
-            case ALLEGRO_EVENT_DISPLAY_CLOSE:
-            case ALLEGRO_EVENT_KEY_DOWN:
-                game->status = Quit;
-                break;
-            }
     }
 
     free(timerevent);

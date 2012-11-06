@@ -99,5 +99,9 @@ void draw_ship(Game*);
 void draw_hud(Game*);
 // Draws the pause menu
 void draw_paused(Game*);
+// Draws the won message
+void draw_won(Game*);
+// Draws the lost message
+void draw_lost(Game*);
 
 #endif

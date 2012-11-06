@@ -120,7 +120,9 @@ void handle_key_event(Game *game, int keycode) {
             game->status = Playing;
             break;
         }
-    }
+    } else if (game->status == Won
+               || game->status == Lost)
+      game->status = Quit;
 }
 
 void rotate_ship_left(Game *game) {
@@ -355,4 +357,20 @@ void draw_hud(Game *game) {
         al_draw_line(-6, 4, -1, 4, SHIP_COLOR, 1.0f);
         al_draw_line(6, 4, 1, 4, SHIP_COLOR, 1.0f);
     }
+}
+
+void draw_won(Game *game) {
+  int x, y;
+  x = (game->size.x - 50) / 2;
+  y = (game->size.y - 30) / 2;
+  al_draw_text(ttf_font, al_map_rgb(200, 200, 200), x, y,
+               ALLEGRO_ALIGN_LEFT, "Congratulations! You won");
+}
+
+void draw_lost(Game *game) {
+  int x, y;
+  x = (game->size.x - 50) / 2;
+  y = (game->size.y - 30) / 2;
+  al_draw_text(ttf_font, al_map_rgb(200, 200, 200), x, y,
+               ALLEGRO_ALIGN_LEFT, "You lost");
 }
