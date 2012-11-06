@@ -345,7 +345,7 @@ void draw_hud(Game *game) {
                  buffer);
 
     int i;
-    for (i = 0; i != game->lives; i++) {
+    for (i = 0; i < game->lives; i++) {
         al_identity_transform(&trans);
         al_translate_transform(&trans, 30 + 30 * i, 50);
         al_use_transform(&trans);
