@@ -8,7 +8,7 @@
 #define BULLET_LIFETIME 60
 #define BULLET_SPEED 7
 #define BULLET_COLOR al_map_rgb(255, 255, 255)
-#define SHOT_DELAY 7
+#define SHOT_DELAY 15
 
 typedef struct {
     ParticleManager pm;

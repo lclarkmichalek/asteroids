@@ -47,37 +47,46 @@ void delete_game(Game *g) {
     free(g);
 }
 
+float normal_rand() {
+    float v = drand48();
+    return -(2*v - 1) * (2*v - 1) + 1;
+}
+
 void spawn_asteroid(Game *g) {
-    Vector verts[VERTEXN] = {
-        {0, 0, 0},
-        {100, 50, 0},
-        {50, 100, 0},
-        {0, 75, 0},
-        {-100, 100, 0},
-        {-125, 25, 0},
-        {-125, -50, 0},
-        {-25, -50, 0},
-        {-50, -100, 0},
-        {25, -100, 0},
-        {100, -50, 0},
-        {100, -25, 0}
-    };
-    Vector pos = {0, 0, 0};
-    Vector dir = {1, 3, 0};
+    Vector verts[VERTEXN];
+
+    int i;
+    float delta = 2 * 3.142 / VERTEXN;
+    for (i = 0; i < VERTEXN; i++) {
+        float mag = 100 * normal_rand();
+        Vector v = {
+            mag * cos(i * delta),
+            mag * sin(i * delta),
+            0
+        };
+        verts[i] = v;
+    }
+
+    Vector pos = {drand48() * g->size.x,
+                  drand48() * g->size.y,
+                  0
+                 };
+    Vector dir = {drand48() * 10,
+                  drand48() * 10,
+                  0
+                 };
+    bound_asteroid_speeds(&dir);
 
     Asteroid *a = malloc(sizeof(Asteroid));
     *a = new_asteroid(pos, verts, dir);
+    a->angle = drand48() * 2 * 3.142;
     AsteroidNode *n = malloc(sizeof(AsteroidNode));
     n->value = a;
 
-    n->prev = NULL;
-    if (g->asteroids == NULL) {
-        g->asteroids = n;
-        n->next = NULL;
-    } else {
-        n->next = g->asteroids;
-        g->asteroids = n;
-    }
+    if (!point_in_asteroid_area(g->ship.position, a))
+        insert_in_asteroid_list(&g->asteroids, n);
+    else
+        spawn_asteroid(g);
 }
 
 void handle_key_status(Game *game, ALLEGRO_KEYBOARD_STATE *keys) {
@@ -135,8 +144,6 @@ void bound_ship_speeds(Game *game) {
 }
 
 void accelerate_ship(Game *game) {
-    if (game->ship.invincible)
-        return;
     Vector delta;
     delta.x = (sin(-game->ship.angle) * ACCEL_CONST);
     delta.y = (cos(-game->ship.angle) * ACCEL_CONST);
@@ -145,8 +152,6 @@ void accelerate_ship(Game *game) {
 }
 
 void deccelerate_ship(Game *game) {
-    if (game->ship.invincible)
-        return;
     Vector delta;
     delta.x = (sin(-game->ship.angle) * ACCEL_CONST);
     delta.y = (cos(-game->ship.angle) * ACCEL_CONST);
@@ -197,8 +202,6 @@ void update_ship(Game* game) {
     if (game->ship.invincible) {
         game->ship.invincible--;
     } else {
-        game->ship.position =
-            wrap(game->size, vec_add(game->ship.position, game->ship.velocity));
         if (point_collides(game->asteroids, game->ship.position) != NULL) {
             game->lives--;
             game->ship.invincible = SHIP_INVINCIBLE;
@@ -207,6 +210,8 @@ void update_ship(Game* game) {
             game->ship.angle = 0;
         }
     }
+    game->ship.position =
+        wrap(game->size, vec_add(game->ship.position, game->ship.velocity));
     game->ship.velocity = vec_mul(game->ship.velocity, 1 - SHIP_FRICTION);
 }
 
@@ -244,9 +249,13 @@ void update_paused(Game *game) {
 }
 
 void init_layer(Game *game, ALLEGRO_BITMAP **mask, float opacity) {
-    *mask = al_create_bitmap(game->size.x + 400, game->size.y + 400);
+    ALLEGRO_TRANSFORM trans;
+    al_identity_transform(&trans);
+    al_use_transform(&trans);
+    *mask = al_create_bitmap(game->size.x, game->size.y);
     ALLEGRO_BITMAP *old = al_get_target_bitmap();
     al_set_target_bitmap(*mask);
+
     al_clear_to_color(al_map_rgba(0,0,0, 255 - (int)(opacity * 255)));
 
     int b1, b2, b3;
@@ -258,7 +267,10 @@ void init_layer(Game *game, ALLEGRO_BITMAP **mask, float opacity) {
 }
 
 void draw_mask(ALLEGRO_BITMAP *mask) {
-    al_draw_bitmap(mask, -200, -200, 0);
+    ALLEGRO_TRANSFORM trans;
+    al_identity_transform(&trans);
+    al_use_transform(&trans);
+    al_draw_bitmap(mask, 0, 0, 0);
 
     al_destroy_bitmap(mask);
 }
@@ -282,8 +294,27 @@ void draw_game(Game *game, float opacity) {
 }
 
 void draw_paused(Game *game) {
-    game->status = Paused;
-    al_clear_to_color(al_map_rgba(0, 0, 0, 100));
+    ALLEGRO_TRANSFORM trans;
+    al_identity_transform(&trans);
+    al_use_transform(&trans);
+
+    int x, y;
+    x = (game->size.x - 120) / 2;
+    y = (game->size.y - 30) / 2;
+    al_draw_text(ttf_font, al_map_rgb(200, 200, 200),
+                 x, y, ALLEGRO_ALIGN_LEFT, "Paused");
+
+    char* msg = "Use the arrow keys to move, and space to shoot";
+    y = game->size.y - 130;
+    x = (game->size.x - 740)/2;
+    al_draw_text(ttf_font, al_map_rgb(200, 200, 200), x, y,
+                 ALLEGRO_ALIGN_LEFT, msg);
+
+    msg = "If your ship or an asteroid is bold, it is invincible";
+    y = game->size.y - 80;
+    x = (game->size.x - 800)/2;
+    al_draw_text(ttf_font, al_map_rgb(200, 200, 200), x, y,
+                 ALLEGRO_ALIGN_LEFT, msg);
 }
 
 void draw_ship(Game *game) {
@@ -297,10 +328,10 @@ void draw_ship(Game *game) {
 
     int width = !game->ship.invincible ? 2 : 4;
 
-    al_draw_line(-8, 9, 0, -11, SHIP_COLOR , width);
-    al_draw_line(0, -11, 8, 9, SHIP_COLOR, width);
-    al_draw_line(-6, 4, -1, 4, SHIP_COLOR, width);
-    al_draw_line(6, 4, 1, 4, SHIP_COLOR, width);
+    al_draw_line(-8, 20, 0, 0, SHIP_COLOR , width);
+    al_draw_line(8, 20, 0, 0, SHIP_COLOR, width);
+    al_draw_line(-6, 15, -1, 15, SHIP_COLOR, width);
+    al_draw_line(6, 15, 1, 15, SHIP_COLOR, width);
 }
 
 void draw_hud(Game *game) {

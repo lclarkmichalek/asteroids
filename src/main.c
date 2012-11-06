@@ -38,7 +38,9 @@ int main() {
     size.y = al_get_display_height(display);
 
     Game* game = new_game(size);
-    spawn_asteroid(game);
+    int i;
+    for (i = 0; i < ASTEROIDN; i++)
+        spawn_asteroid(game);
 
     ALLEGRO_TIMER* timer = al_create_timer(1.0/FPS);
 
@@ -89,6 +91,8 @@ int main() {
         update_game(game);
 
         draw_game(game, game->status == Paused ? 0.2 : 1);
+        if (game->status == Paused)
+            draw_paused(game);
 
         al_flip_display();
     }

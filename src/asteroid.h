@@ -41,6 +41,8 @@ Asteroid new_asteroid(Vector pos, Vector[VERTEXN], Vector);
 void delete_asteroid(Asteroid*);
 // Does collision detection on an asteroid
 bool point_in_asteroid(Vector, Asteroid*);
+// Returns true if the point is nearly in the asteroid
+bool point_in_asteroid_area(Vector, Asteroid*);
 
 struct AsteroidNode {
     struct AsteroidNode *next, *prev;
@@ -71,5 +73,7 @@ void draw_asteroids(AsteroidNode*);
 // Splits an asteroid in two, removes it from the list, and adds the
 // new ones to the list
 void split_asteroid(AsteroidNode**, AsteroidNode*);
+// Bounds the asteroid velocity
+void bound_asteroid_speeds(Vector*);
 
 #endif

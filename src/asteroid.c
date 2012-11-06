@@ -55,6 +55,11 @@ bool point_in_asteroid(Vector p, Asteroid* asteroid) {
     return false;
 }
 
+bool point_in_asteroid_area(Vector p, Asteroid* asteroid) {
+    return magnitude_squared(vec_sub(p, asteroid->center)) <
+           asteroid->radius_squared * 1.2;
+}
+
 void delete_asteroid_node(AsteroidNode* n) {
     delete_asteroid(n->value);
     free(n);

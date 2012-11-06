@@ -21,6 +21,7 @@
 #define ASTEROID_SCORE 100
 #define SHIP_FRICTION 0.01
 #define ASTEROID_PARTICLEN 20
+#define ASTEROIDN 8
 
 // Initialises and loads fonts
 bool init_font();
