@@ -58,7 +58,7 @@ void spawn_asteroid(Game *g) {
     int i;
     float delta = 2 * 3.142 / VERTEXN;
     for (i = 0; i < VERTEXN; i++) {
-        float mag = 100 * normal_rand();
+        float mag = 70 * normal_rand() + 30;
         Vector v = {
             mag * cos(i * delta),
             mag * sin(i * delta),
