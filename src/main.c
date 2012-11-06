@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <time.h>
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
@@ -11,6 +12,8 @@
 ALLEGRO_KEYBOARD_STATE *keys;
 
 int main() {
+    srand48(time(NULL));
+
     if (!al_init()) {
         puts("Could not initialise allegro");
         return 1;
