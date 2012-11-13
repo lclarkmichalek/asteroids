@@ -29,112 +29,169 @@ Movement with the arrow keys. Space to shoot. Escape to pause.
 Implementation
 ==============
 
-Asteroid
---------
+Game - game.{c,h}
+-----------------
 
-Asteroid edges are represented as an array of vectors. The sum of those vectors must be 0.
-All asteroids have 12 edges; when an asteroid is split, the edge that splits must be made up
-of 6 vectors. A center and a radius must be defined; the center _must_ be inside the asteroid,
-and the radius should be the largest distance from the center to a vertex.
+The Game type contains either the value of, or references to the state of the
+game. For explanation of how the asteroids, particlemanager, ship and
+bulletmanager fields work, see their respective explanations below.
 
-Player
-------
+The size field is the size of the display screen. This is set when the
+ALLEGRO_EVENT_DISPLAY_RESIZE event is caught from allegro.
 
-The player is represented by two vectors; a position vector and a direction vector.
+The rest of the game module is best discussed in the same context as the main
+function (in main.c). All input is in terms of events, other than keyboard input
+which is checked each frame. The structure goes something like this:
 
-Particles
----------
+ 1) The main function catches events
+ 2) Events are then passed to handler functions in the game module. i.e.
+    handle_key_status, handle_key_event, update_game
+ 3) Handler functions then dispatch to other functions based on game state. i.e.
+    draw_paused when game->status == Paused, update_asteroids when
+    game->status == Playing
+ 4) When all events have been handled or ignored and the game state fully
+    updated, the game is drawn to the screen via draw_game
 
-Purely graphical particles are managed by an opaque particle manager. The data defining the particles are:
+Asteroid - asteroid.{c,h}
+-------------------------
 
-- Lifetime of particle (frames, given 60 frames per second
-- Velocity vector of particle (pixels per frame)
-- Start position vector of particle
-- Frame created
-//- Color
-//- Width
+Asteroids are implemented as non-concave non-regular dodecagons. The position of
+an asteroid is represented by the "center" vector, with the vertexes being
+stored as vectors relative to the center. For this reason, "center" is a mostly
+meaningless name; the "center" is simply a point in the asteroid. The vertexes
+do not change after the asteroid has been created, so we keep the angle that the
+asteroid is rotating at in a seperate field "angle". This means we can use a
+matrix transformation to rotate the points at the time of drawing; the fact that
+the Allegro library supplies such functionality makes this much easier than
+rotating the verticies manually each frame. There is also a "direction" field
+which stores the Asteroid's velocity. This is added to the "center" value every
+time the asteroid is updated.
 
-The particle manager stores the particles as a fixed size array. This is because we do not want to allocate
-memory every time we create a particle. When we add a particle to the particle manager, we need to iterate
-through the array to find a particle that is not alive and then replace it, otherwise we replace the oldest
-particle. i.e.
+The asteroid also has an "invincible" field. If this value is non-zero, then the
+asteroid is said to be invincible, i.e. bullets do not destroy it. This was
+implemented to stop more than one bullet fired in rapid succession destroying an
+asteroid and all of it's children, instead of just the asteroid that was 
+initially hit. The "generation" field is how many times asteroids have been
+split to reach the current asteroid, i.e. when the game starts, all asteroids 
+are gen0, when one is hit, two new asteroids are made with gen1. When an 
+asteroid is hit with generation > MAX_GENERATION, no new asteroids are created.
 
-Particle* get_unused_particle(Particle* particles, uint particlen) {
-  Particle* oldest = particles;
-  for(p = particles; (p - particles) < particlen; p++) {
-    if (p->dead)
-     return p;
-    if (p->created < oldest->created)
-     oldest = p;
-  }
-  return p;
-}
+Collision detection against asteroids is done in the function
+`bool point_in_asteroid(Vector, Asteroid*)`. Collision detection is done in two
+parts:
 
-Bullets
--------
+ 1) Rough detection
 
-Similarly to Particles, Bullets are defined as 
+    To save the overhead of doing full detection, we do rough detection,
+    treating the asteroid as a circle. This is where the "radius_squared"
+    field of the asteroid comes into play. The radius_squared of the asteroid is
+    the largest distance from the center to a vertex, squared. This means that
+    we can check if the point is in the rough area of the asteroid very quickly;
+    calculating the magnitude squared of a vector is very cheap. However, it is
+    not precise; modeling asteroids as circles is hardly perfect.
 
-- Velocity (Potentially const?)
-- Current position
-- Frame created
+ 2) Precise detection
 
-They have a constant life, inherit the ship velocity. They are stored in a manner simmilar to the particles.
-Due to the fact that they have a constant life, and a constant maximum rate of fire, we can calculate the maximum
-number of particles, which allows us to safely use a fixed sized array.
+    If a point passes rough detection, we do precise detection. This is done by
+    splitting the asteroid into a series of triangles between the center, and
+    two adjecent vertexes. We then check that the point does not collide with
+    any of the triangles. This is done by converting the point (relative to a
+    vertex) into barycentric coordinates, which allow us to very simply check if
+    the point is within the triangle. I learnt this technique from the following
+    webpage: http://www.blackpawn.com/texts/pointinpoly/default.html
 
-Collision Detection
--------------------
+As we need to create and delete many asteroids, and access them only
+sequentially, a linked list makes sense. The linked list is not intrusive, and
+is implemented in the `AsteroidNode` struct. It is doubly linked, and really
+very simple. Several functions are provided that work on the list type:
 
-Potential collisions:
+  -) `bool is_list_consistent(AsteroidNode*)`
 
-- Ship & Asteroid
-- Asteroid & Bullet
+     This function checks for basic consistency. Mostly that node->next->prev ==
+     node and similar invariants.
 
-To speed up collision detection, we can treat asteroids as circles, and then
-look for collisions with those. For every circle that collides, we can then do
-fine grained collision detection. Fine grained collision detection is done by
-spliting the polygon into triangles, and then checking for collisions in those
-triangles.
+  -) `void insert_in_asteroid_list(AsteroidNode**, AsteroidNode*)` and
+     `void remove_from_asteroid_list(AsteroidNode**, AsteroidNode*)`
 
-// Returns the first node of the AsteroidList that has the point inside it
-AsteroidNode* point_in_asteroids(Vector point, AsteroidList asteroids) {
-  AsteroidNode* head, tail, asteroid;
-  head = asteroids.head;
-  tail = asteroids.tail;
-  for(asteroid = head; asteroid != tail; asteroid = asteroid->next) {
-    if(in_asteroid(point, asteroid->value))
-      return asteroid;
-  }
-  return NULL;
-}
+     Inserts the node in the list. The list is represented as an AsteroidNode**
+     as if the list is empty, a pointer to NULL will be passed as the first
+     paramater, and we need to be able to change the reference, not just the
+     value.
 
-// Returns true if the point is inside the asteroid
-bool in_asteroid(Vector point, Asteroid asteroid) {
-  Vector center = asteroid.center;
-  int radius = asteroid.radius;
-  // If we're not in the vauge area
-  if (!(magnitude_squared(vec_sub(point, center)) < radius * radius)) {
-    return false;
-  }
-  Vector* a, b;
-  for(a = asteroid.vertices; vec_sub(a, asteroid.vertices) < VERTEXN; a++) {
-    // Get the next vertex in the loop (but we need to wrap around)
-    b = (a - asteroid.vertices == VERTEXN - 1) ? asteroid.vertices : (a + 1));
-    if (in_triangle(point, *a, *b, center))
-      return true;
-  }
-  return false;
-}
+  -) `int count_asteroids(AsteroidNode*)`
 
-// Returns true if the point is inside the triangel a b c
-bool in_triangle(Vector point, Vector a, Vector b, Vector c) {
-  return same_side(point, a, b, c) && same_side(point, b, a, c) && same_side(point, c, a, b);
-}
+     Returns the length of the asteroid list. O(n) performance.
 
-// Returns true if point1 and point2 are both on the same side of the line a b
-bool same_side(Vector point1, Vector point2, Vector a, Vector b) {
-  return dot_product(
-    cross_product(vec_sub(b, a), vec_sub(point1, a)),
-    cross_product(vec_sub(b, a), vec_sub(point2, a)));
-}
+  -) `AsteroidNode* point_collides(AsteroidNode*, Vector)`
+  
+     While this function may seem a little less independant than the other
+     functions, this simply maps collision detection over the list, and
+     returns the first node that collides. The AsteroidNode* is returned rather
+     than the Asteroid as we do not want to have to traverse the list again to
+     find the collides AsteroidNode to remove it, and giving our algorithm
+     potentially quadratic performance.
+
+Gameplay functions are a little more interwined with the rest of the game,
+however there is still a certain amount of independant work to be done.
+The "entry" function is `void update_asteroid(AsteroidNode*, Vector)`. This
+function is called every frame, and updates the asteroid positions and angles,
+and decrements the invicible counter where neccissary. The Vector argument 
+passed is the size of the screen; the size may change midway through the game 
+and I thought it best not to rely on global state to pass the information. The
+information is needed as asteroid's positions cannot be off the screen; we use
+the wrap function provided by the vector library to do this.
+
+There is one other function that implements game logic:
+`void split_asteroid(AsteroidNode**, AsteroidNode*)`. This is called when a
+bullet hits an asteroid, and the hit asteroid must be deleted, and two new
+asteroids created. The asteroid list is also required to deal with the case that
+there is only one asteroid on the screen, and no new asteroids are to be
+created, in which case the asteroid list must be set to NULL.
+
+`void draw_asteroids(AsteroidNode*)` simply maps through the asteroids and
+draws them to the screen with the correct roation, position etc.
+
+Ship - ship.{c,h}
+-----------------
+
+The ship has a position, a velocity and an angle. This allows for the classic
+asteroids style of movement, where we can turn and accellerate fluidly. It
+also has an "invincible" field which serves a purpose similar to the invincible
+field on the Asteroid type.
+
+Particles - particles.{c,h}
+---------------------------
+
+The particle manager is simply an array of particles and a "current_frame"
+value. The current_frame field is used as a reference for the age of the
+particle, i.e. when a new particle is created, the "created" field is set to
+the manager's current_frame value. The rest of the manager is pretty self
+explanitory. The only interesting function is
+`void add_particle(ParticleManager*, Vector, Vector, uint)`. To avoid allocation
+of memory for every new particle created (as allocation is slow and new
+particles generally come in bursts), we use a fixed size array, and then replace
+the first "dead" particle we find, or otherwise the oldest particle. This allows
+us to always add a particle, no matter the number of particles already on 
+screen, as old particles will be "deleted" first.
+
+Bullets - bullet.{c,h}
+----------------------
+
+The bullet manager is implemented as a layer over a particle manager. We limit
+the rate of fire of the ship by setting the last_shot field to the current_frame
+field of the particle manager every time we emit a bullet, and then if we are
+asked to emit a bullet before the SHOT_DELAY has passed, we simply ignore it.
+
+The bullet manager also has a function
+`AsteroidNode* bullet_hit(BulletManager*, AsteroidNode*)` which returns the
+asteroid hit by a bullet if any, and NULL otherwise.
+
+Vector - vector.{c,h}
+---------------------
+
+All of the collision detection mathematics is based on vectors, and having a
+vector type makes managing positions and velocities very easy. The vector
+library implements all of the basic operations on vectors; addition, 
+subtraction, scalar multiplication, dot and cross product. It also adds some
+less mathmatical operations, such as wrap and rotate. The in_triangle function
+implements the triangle collision detection discussed in the Asteroids section.

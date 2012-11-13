@@ -28,3 +28,4 @@
 
 - BUGS
   - Collision detection is still a bit jenky
+  - Updates are tied to frame rate
