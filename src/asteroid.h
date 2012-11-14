@@ -6,6 +6,7 @@
 #include "./vector.h"
 
 #define VERTEXN 12
+#define MUTATIONN 2
 #define ASTEROID_ROTATION_SPEED 1.2
 #define ASTEROID_COLOR al_map_rgb(255, 255, 255)
 #define ASTEROID_INVINCIBLE 30

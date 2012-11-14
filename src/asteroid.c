@@ -181,6 +181,9 @@ void split_asteroid(AsteroidNode **list, AsteroidNode *asteroid) {
             vertex - asteroid->value->verticies < VERTEXN;
             vertex++) {
         *vertex = vec_mul(*vertex, ASTEROID_SIZE_DECAY);
+        if (drand48() < MUTATIONN/VERTEXN) {
+            *vertex = vec_mul(*vertex, drand48() * 0.5 + 0.5);
+        }
     }
 
     Vector direction1, direction2;
