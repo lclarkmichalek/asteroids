@@ -68,8 +68,8 @@ void spawn_asteroid(Game *g) {
     Vector pos = {drand48() * g->size.x,
                   drand48() * g->size.y
                  };
-    Vector dir = {drand48() * 10,
-                  drand48() * 10
+    Vector dir = {drand48() * 20 - 10,
+                  drand48() * 20 - 10
                  };
     bound_asteroid_speeds(&dir);
 
