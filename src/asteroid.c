@@ -139,7 +139,9 @@ void update_asteroids(AsteroidNode* asteroids, Vector size) {
 void draw_asteroids(AsteroidNode* n) {
     ALLEGRO_TRANSFORM trans;
     for(; n != NULL; n = n->next) {
-        rotate_around(&trans, n->value->center, n->value->angle);
+        al_identity_transform(&trans);
+        al_rotate_transform(&trans, n->value->angle);
+        al_translate_transform(&trans, n->value->center.x, n->value->center.y);
         al_use_transform(&trans);
 
         Vector *a, *b;

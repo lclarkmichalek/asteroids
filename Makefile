@@ -5,7 +5,6 @@ LDFLAGS=-lallegro -lallegro_primitives -lallegro_font -lallegro_ttf \
 SOURCES= \
 	src/vector.c src/particles.c src/asteroid.c \
 	src/ship.c src/game.c src/bullets.c \
-	src/drawing.c \
 	src/main.c
 HEADERS=$(SOURCES:.c=.h)
 OBJECTS=$(SOURCES:.c=.o)
