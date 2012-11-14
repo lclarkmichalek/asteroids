@@ -4,7 +4,7 @@
 #include "./vector.h"
 
 #define SHIP_INVINCIBLE 90
-#define MAX_SPEED 200
+#define MAX_SPEED 300
 #define ACCEL_CONST 10
 #define SHIP_ROTATION_SPEED 0.1
 

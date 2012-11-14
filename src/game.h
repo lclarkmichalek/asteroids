@@ -16,7 +16,7 @@
 #define BACKGROUND_COLOR al_map_rgb(0, 0, 0)
 #define HUD_COLOR al_map_rgb(255, 255, 255)
 #define ASTEROID_SCORE 100
-#define SHIP_FRICTION 0.0001
+#define SHIP_FRICTION 0.5
 #define ASTEROID_PARTICLEN 20
 #define ASTEROIDN 8
 

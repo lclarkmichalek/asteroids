@@ -176,7 +176,8 @@ void update_ship(Game* game, float dt) {
     game->ship.position =
         wrap(game->size, vec_add(game->ship.position,
                                  vec_mul(game->ship.velocity, dt)));
-    game->ship.velocity = vec_mul(game->ship.velocity, 1 - SHIP_FRICTION);
+    game->ship.velocity = vec_mul(game->ship.velocity,
+                                  (pow(1 - SHIP_FRICTION, dt)));
 }
 
 void update_particles(Game *game, float dt) {
