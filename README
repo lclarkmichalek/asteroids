@@ -8,7 +8,7 @@ Dependencies
 
 Allegro v5.0.x
 GNU compatible make
-gcc/clang
+gcc
 
 Optional
 --------
@@ -195,12 +195,3 @@ library implements all of the basic operations on vectors; addition,
 subtraction, scalar multiplication, dot and cross product. It also adds some
 less mathmatical operations, such as wrap and rotate. The in_triangle function
 implements the triangle collision detection discussed in the Asteroids section.
-
-Resources used
-==============
-
-The font used in the game and contained within font.ttf is Speculum by D. Keith
-provided under an open license on http://www.dafont.com/. This was the only
-externally produced asset used in the game, aside from the Allegro graphics
-library. The precise collision detection algorithm was found at 
-http://www.blackpawn.com/texts/pointinpoly/default.html.
