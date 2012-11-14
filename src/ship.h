@@ -4,8 +4,8 @@
 #include "./vector.h"
 
 #define SHIP_INVINCIBLE 90
-#define MAX_SPEED 3
-#define ACCEL_CONST 0.3
+#define MAX_SPEED 200
+#define ACCEL_CONST 10
 #define SHIP_ROTATION_SPEED 0.1
 
 typedef struct Ship {

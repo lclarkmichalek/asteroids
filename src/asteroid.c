@@ -121,17 +121,17 @@ AsteroidNode* point_collides(AsteroidNode* asteroids, Vector point) {
     return NULL;
 }
 
-void update_asteroids(AsteroidNode* asteroids, Vector size) {
+void update_asteroids(AsteroidNode* asteroids, Vector size, float dt) {
     AsteroidNode *node;
     for(node = asteroids;
             node != NULL;
             node = node->next) {
-        if (node->value->invincible)
-            node->value->invincible--;
+        if (node->value->invincible > 0)
+            node->value->invincible -= dt;
         node->value->center = wrap(size,
                                    vec_add(node->value->center,
-                                           node->value->direction));
-        node->value->angle += ASTEROID_ROTATION_SPEED;
+                                           vec_mul(node->value->direction, dt)));
+        node->value->angle += ASTEROID_ROTATION_SPEED * dt;
     }
 }
 

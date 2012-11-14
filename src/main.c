@@ -63,6 +63,8 @@ int main() {
     ALLEGRO_EVENT *timerevent = malloc(sizeof(ALLEGRO_EVENT));
     ALLEGRO_EVENT *genericevent = malloc(sizeof(ALLEGRO_EVENT));
 
+    float last_drawn, now;
+    last_drawn = now = al_get_time();
     while (game->status != Quit) {
         al_get_keyboard_state(keys);
 
@@ -90,7 +92,9 @@ int main() {
                 break;
             }
 
-        update_game(game);
+        now = al_get_time();
+        update_game(game, now - last_drawn);
+        last_drawn = now;
 
         draw_game(game, game->status == Playing ? 1 : 0.2);
         switch(game->status) {

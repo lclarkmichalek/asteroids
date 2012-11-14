@@ -8,7 +8,7 @@
 
 ParticleManager* new_particle_manager() {
     ParticleManager* pm = malloc(sizeof(ParticleManager));
-    pm->current_frame = 0;
+    pm->current_time = 0;
     Particle* particle;
     for(particle = pm->particles;
             (particle - pm->particles) < PARTICLEN;
@@ -44,12 +44,12 @@ Particle* find_dead_particle(ParticleManager* pm) {
     return oldest;
 }
 
-void add_particle(ParticleManager* pm, Vector pos, Vector vel, uint lifetime) {
+void add_particle(ParticleManager* pm, Vector pos, Vector vel, float lifetime) {
     Particle* particle = find_dead_particle(pm);
     particle->position = pos;
     particle->velocity = vel;
     particle->lifetime = lifetime;
-    particle->created = pm->current_frame + 1;
+    particle->created = pm->current_time + 1;
     particle->alive = true;
 }
 
@@ -60,10 +60,10 @@ void draw_particles(ParticleManager* pm) {
     Particle* p;
     for(p = pm->particles; (p - pm->particles) < PARTICLEN; p++) {
         if (p->alive) {
-            Vector p2 = vec_add(p->position, p->velocity);
+            Vector p2 = vec_add(p->position, vec_mul(p->velocity, 0.1));
             al_draw_line(p->position.x, p->position.y, p2.x, p2.y,
                          PARTICLE_COLOR, 1);
-            if (p->created + p->lifetime < pm->current_frame)
+            if (p->created + p->lifetime < pm->current_time)
                 p->alive = false;
         }
     }

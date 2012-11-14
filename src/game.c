@@ -68,8 +68,8 @@ void spawn_asteroid(Game *g) {
     Vector pos = {drand48() * g->size.x,
                   drand48() * g->size.y
                  };
-    Vector dir = {drand48() * 20 - 10,
-                  drand48() * 20 - 10
+    Vector dir = {drand48() * ASTEROID_SPEED * 2 - ASTEROID_SPEED,
+                  drand48() * ASTEROID_SPEED * 2 - ASTEROID_SPEED
                  };
     bound_asteroid_speeds(&dir);
 
@@ -126,21 +126,22 @@ void emit_asteroid_hit_particles(ParticleManager *pm, Vector center) {
     char n;
     for (n = 0; n < ASTEROID_PARTICLEN; n++) {
         float angle = (float)drand48() * 2 * 3.142;
-        float mag = (float)drand48() * 2;
+        float mag = (float)drand48() * 100;
         Vector direction = vec_mul(rotate(unit, angle), mag);
+        float lifetime = (float)drand48() * 0.5 + 0.5;
         add_particle(pm,
-                     center, direction, 60);
+                     center, direction, lifetime);
     }
 }
 
-void update_game(Game *game) {
+void update_game(Game *game, float dt) {
     if (game->status == Paused)
         update_paused(game);
     if (game->status != Playing)
         return;
 
-    update_asteroids(game->asteroids, game->size);
-    update_particles(game);
+    update_asteroids(game->asteroids, game->size, dt);
+    update_particles(game, dt);
 
     if (!is_list_consistent(game->asteroids))
         puts("Inconsistent");
@@ -152,7 +153,7 @@ void update_game(Game *game) {
         game->score += ASTEROID_SCORE;
     }
 
-    update_ship(game);
+    update_ship(game, dt);
 
     if (game->lives < 0)
         game->status = Lost;
@@ -160,9 +161,9 @@ void update_game(Game *game) {
         game->status = Won;
 }
 
-void update_ship(Game* game) {
-    if (game->ship.invincible) {
-        game->ship.invincible--;
+void update_ship(Game* game, float dt) {
+    if (game->ship.invincible > 0) {
+        game->ship.invincible -= dt;
     } else {
         if (point_collides(game->asteroids, game->ship.position) != NULL) {
             game->lives--;
@@ -173,35 +174,38 @@ void update_ship(Game* game) {
         }
     }
     game->ship.position =
-        wrap(game->size, vec_add(game->ship.position, game->ship.velocity));
+        wrap(game->size, vec_add(game->ship.position,
+                                 vec_mul(game->ship.velocity, dt)));
     game->ship.velocity = vec_mul(game->ship.velocity, 1 - SHIP_FRICTION);
 }
 
-void update_particles(Game *game) {
+void update_particles(Game *game, float dt) {
     ParticleManager *pm, *bm;
     pm = game->particlemanager;
     bm = &game->bulletmanager->pm;
 
-    bm->current_frame++;
+    bm->current_time += dt;
     Particle* particle;
     for(particle = bm->particles;
             (particle - bm->particles) < PARTICLEN;
             particle++) {
         if (particle->alive)
             particle->position = wrap(game->size,
-                                      vec_add(particle->position, particle->velocity));
-        if (particle->created + particle->lifetime < bm->current_frame)
+                                      vec_add(particle->position,
+                                              vec_mul(particle->velocity, dt)));
+        if (particle->created + particle->lifetime < bm->current_time)
             particle->alive = false;
     }
 
-    pm->current_frame++;
+    pm->current_time += dt;
     for(particle = pm->particles;
             (particle - pm->particles) < PARTICLEN;
             particle++) {
         if (particle->alive)
             particle->position = wrap(game->size,
-                                      vec_add(particle->position, particle->velocity));
-        if (particle->created + particle->lifetime < pm->current_frame)
+                                      vec_add(particle->position,
+                                              vec_mul(particle->velocity, dt)));
+        if (particle->created + particle->lifetime < pm->current_time)
             particle->alive = false;
     }
 }

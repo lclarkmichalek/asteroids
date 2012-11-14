@@ -16,7 +16,7 @@
 #define BACKGROUND_COLOR al_map_rgb(0, 0, 0)
 #define HUD_COLOR al_map_rgb(255, 255, 255)
 #define ASTEROID_SCORE 100
-#define SHIP_FRICTION 0.01
+#define SHIP_FRICTION 0.0001
 #define ASTEROID_PARTICLEN 20
 #define ASTEROIDN 8
 
@@ -70,11 +70,11 @@ void handle_key_status(Game*, ALLEGRO_KEYBOARD_STATE*);
 void handle_key_event(Game*, int);
 
 // Updates the gamestate for a single frame
-void update_game(Game*);
+void update_game(Game*, float);
 // Updates the ship
-void update_ship(Game*);
+void update_ship(Game*, float);
 // Updates the particle managers
-void update_particles(Game*);
+void update_particles(Game*, float);
 // Updates the game when it is paused
 void update_paused(Game*);
 

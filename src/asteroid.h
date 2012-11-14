@@ -6,10 +6,10 @@
 #include "./vector.h"
 
 #define VERTEXN 12
-#define ASTEROID_ROTATION_SPEED 0.02
+#define ASTEROID_ROTATION_SPEED 1.2
 #define ASTEROID_COLOR al_map_rgb(255, 255, 255)
 #define ASTEROID_INVINCIBLE 30
-#define ASTEROID_SPEED 1
+#define ASTEROID_SPEED 60
 #define MAX_GENERATION 3
 #define ASTEROID_SIZE_DECAY 0.7
 
@@ -67,7 +67,7 @@ void delete_asteroid_list(AsteroidNode*);
 // game. Returns NULL if there is no collision
 AsteroidNode* point_collides(AsteroidNode*, Vector);
 // Updates the positions of the asteroids for one frame
-void update_asteroids(AsteroidNode*, Vector);
+void update_asteroids(AsteroidNode*, Vector, float);
 // Draws the asteroids on the screen
 void draw_asteroids(AsteroidNode*);
 // Splits an asteroid in two, removes it from the list, and adds the
