@@ -4,6 +4,9 @@
 #include "./vector.h"
 
 #define SHIP_INVINCIBLE 90
+#define MAX_SPEED 3
+#define ACCEL_CONST 0.3
+#define SHIP_ROTATION_SPEED 0.1
 
 typedef struct Ship {
     // The position of the ship
@@ -18,5 +21,13 @@ typedef struct Ship {
 
 // Creates a new ship with the given position and velocity
 Ship new_ship(Vector, Vector);
+// Rotates the ship left
+void rotate_ship_left(Ship*);
+// Rotates the ship right
+void rotate_ship_right(Ship*);
+// Accelerates the ship
+void accelerate_ship(Ship*);
+// Decelerates the ship
+void deccelerate_ship(Ship*);
 
 #endif

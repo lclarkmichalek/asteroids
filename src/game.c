@@ -92,13 +92,13 @@ void spawn_asteroid(Game *g) {
 void handle_key_status(Game *game, ALLEGRO_KEYBOARD_STATE *keys) {
     if (game->status == Playing) {
         if (al_key_down(keys, ALLEGRO_KEY_LEFT))
-            rotate_ship_left(game);
+            rotate_ship_left(&game->ship);
         if (al_key_down(keys, ALLEGRO_KEY_RIGHT))
-            rotate_ship_right(game);
+            rotate_ship_right(&game->ship);
         if (al_key_down(keys, ALLEGRO_KEY_UP))
-            accelerate_ship(game);
+            accelerate_ship(&game->ship);
         if (al_key_down(keys, ALLEGRO_KEY_DOWN))
-            deccelerate_ship(game);
+            deccelerate_ship(&game->ship);
         if (al_key_down(keys, ALLEGRO_KEY_SPACE))
             shoot_bullet(game->bulletmanager, game->ship);
 
@@ -122,43 +122,7 @@ void handle_key_event(Game *game, int keycode) {
         }
     } else if (game->status == Won
                || game->status == Lost)
-      game->status = Quit;
-}
-
-void rotate_ship_left(Game *game) {
-    game->ship.angle -= SHIP_ROTATION_SPEED;
-}
-
-void rotate_ship_right(Game *game) {
-    game->ship.angle += SHIP_ROTATION_SPEED;
-}
-
-void bound_ship_speeds(Game *game) {
-    Vector *v = &game->ship.velocity;
-    if (v->x < -MAX_SPEED)
-        v->x = -MAX_SPEED;
-    if (v->x > MAX_SPEED)
-        v->x = MAX_SPEED;
-    if (v->y < -MAX_SPEED)
-        v->y = -MAX_SPEED;
-    if (v->y > MAX_SPEED)
-        v->y = MAX_SPEED;
-}
-
-void accelerate_ship(Game *game) {
-    Vector delta;
-    delta.x = (sin(-game->ship.angle) * ACCEL_CONST);
-    delta.y = (cos(-game->ship.angle) * ACCEL_CONST);
-    game->ship.velocity = vec_sub(game->ship.velocity, delta);
-    bound_ship_speeds(game);
-}
-
-void deccelerate_ship(Game *game) {
-    Vector delta;
-    delta.x = (sin(-game->ship.angle) * ACCEL_CONST);
-    delta.y = (cos(-game->ship.angle) * ACCEL_CONST);
-    game->ship.velocity = vec_add(game->ship.velocity, delta);
-    bound_ship_speeds(game);
+        game->status = Quit;
 }
 
 void emit_asteroid_hit_particles(ParticleManager *pm, Vector center) {
@@ -360,17 +324,17 @@ void draw_hud(Game *game) {
 }
 
 void draw_won(Game *game) {
-  int x, y;
-  x = (game->size.x - 50) / 2;
-  y = (game->size.y - 30) / 2;
-  al_draw_text(ttf_font, al_map_rgb(200, 200, 200), x, y,
-               ALLEGRO_ALIGN_LEFT, "Congratulations! You won");
+    int x, y;
+    x = (game->size.x - 50) / 2;
+    y = (game->size.y - 30) / 2;
+    al_draw_text(ttf_font, al_map_rgb(200, 200, 200), x, y,
+                 ALLEGRO_ALIGN_LEFT, "Congratulations! You won");
 }
 
 void draw_lost(Game *game) {
-  int x, y;
-  x = (game->size.x - 50) / 2;
-  y = (game->size.y - 30) / 2;
-  al_draw_text(ttf_font, al_map_rgb(200, 200, 200), x, y,
-               ALLEGRO_ALIGN_LEFT, "You lost");
+    int x, y;
+    x = (game->size.x - 50) / 2;
+    y = (game->size.y - 30) / 2;
+    al_draw_text(ttf_font, al_map_rgb(200, 200, 200), x, y,
+                 ALLEGRO_ALIGN_LEFT, "You lost");
 }

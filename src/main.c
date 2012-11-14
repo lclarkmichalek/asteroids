@@ -95,18 +95,18 @@ int main() {
         draw_game(game, game->status == Playing ? 1 : 0.2);
         switch(game->status) {
         case Playing:
-          break;
+            break;
         case Paused:
-          draw_paused(game);
-          break;
+            draw_paused(game);
+            break;
         case Won:
-          draw_won(game);
-          break;
+            draw_won(game);
+            break;
         case Lost:
-          draw_lost(game);
-          break;
+            draw_lost(game);
+            break;
         default:
-          break;
+            break;
         }
 
         al_flip_display();
