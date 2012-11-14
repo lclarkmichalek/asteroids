@@ -32,9 +32,9 @@ test: $(OBJECTS)
 	nosetests3
 
 asteroids.zip: $(SOURCES)
-	rm -rf asteroids
-	mkdir asteroids
-	git clone . asteroids
-	rm asteroids/.git -rf
-	zip -r asteroids.zip asteroids
-	rm -rf asteroids
+	rm -rf dist
+	mkdir dist
+	git clone . dist
+	rm dist/.git -rf
+	zip -r asteroids.zip dist
+	rm -rf dist
