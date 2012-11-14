@@ -121,7 +121,7 @@ void handle_key_event(Game *game, int keycode) {
         game->status = Quit;
 }
 
-void emit_asteroid_hit_particles(ParticleManager *pm, Vector center) {
+void emit_collision_particles(ParticleManager *pm, Vector center) {
     Vector unit = {0, 1};
     char n;
     for (n = 0; n < ASTEROID_PARTICLEN; n++) {
@@ -148,7 +148,7 @@ void update_game(Game *game, float dt) {
 
     AsteroidNode* hit = bullet_hit(game->bulletmanager, game->asteroids);
     if (hit != NULL && !hit->value->invincible) {
-        emit_asteroid_hit_particles(game->particlemanager, hit->value->center);
+        emit_collision_particles(game->particlemanager, hit->value->center);
         split_asteroid(&game->asteroids, hit);
         game->score += ASTEROID_SCORE;
     }
@@ -166,6 +166,7 @@ void update_ship(Game* game, float dt) {
         game->ship.invincible -= dt;
     } else {
         if (point_collides(game->asteroids, game->ship.position) != NULL) {
+            emit_collision_particles(game->particlemanager, game->ship.position);
             game->lives--;
             game->ship.invincible = SHIP_INVINCIBLE;
             game->ship.position = vec_mul(game->size, 0.5);
@@ -293,7 +294,7 @@ void draw_ship(Game *game) {
                            (int)game->ship.position.y);
     al_use_transform(&trans);
 
-    int width = !game->ship.invincible ? 2 : 4;
+    int width = game->ship.invincible <= 0 ? 2 : 4;
 
     al_draw_line(-8, 20, 0, 0, SHIP_COLOR , width);
     al_draw_line(8, 20, 0, 0, SHIP_COLOR, width);
@@ -311,16 +312,40 @@ void draw_hud(Game *game) {
     al_draw_text(ttf_font, HUD_COLOR, 0, 0, ALLEGRO_ALIGN_LEFT,
                  buffer);
 
+    if (game->ship.invincible > 0 &&
+        game->lives < LIVESN &&
+        game->lives > -1) {
+        char buffer[80];
+        if (game->lives != 0)
+            snprintf(buffer, sizeof(buffer), "Life lost! %d remaining",
+                     game->lives);
+        else
+            strcpy(buffer, "Life lost! No further respawns allowed");
+
+        al_draw_text(ttf_font, HUD_COLOR, game->size.x / 2, 60,
+                     ALLEGRO_ALIGN_CENTRE, buffer);
+
+        snprintf(buffer, sizeof(buffer),
+                 "You are invincible for %.2f seconds...",
+                 game->ship.invincible);
+        al_draw_text(ttf_font, HUD_COLOR, game->size.x / 2, game->size.y - 60,
+                     ALLEGRO_ALIGN_CENTRE, buffer);
+    }
+
     int i;
     for (i = 0; i < game->lives; i++) {
+        float width = 1;
+        if (game->ship.invincible > 0 && game->lives != LIVESN)
+            width = 5;
+
         al_identity_transform(&trans);
-        al_translate_transform(&trans, 30 + 30 * i, 50);
+        al_translate_transform(&trans, 25 + 30 * i, 50);
         al_use_transform(&trans);
 
-        al_draw_line(-8, 9, 0, -11, SHIP_COLOR , 1.0f);
-        al_draw_line(0, -11, 8, 9, SHIP_COLOR, 1.0f);
-        al_draw_line(-6, 4, -1, 4, SHIP_COLOR, 1.0f);
-        al_draw_line(6, 4, 1, 4, SHIP_COLOR, 1.0f);
+        al_draw_line(-8, 9, 0, -11, SHIP_COLOR , width);
+        al_draw_line(0, -11, 8, 9, SHIP_COLOR, width);
+        al_draw_line(-6, 4, -1, 4, SHIP_COLOR, width);
+        al_draw_line(6, 4, 1, 4, SHIP_COLOR, width);
     }
 }
 

@@ -3,7 +3,7 @@
 
 #include "./vector.h"
 
-#define SHIP_INVINCIBLE 90
+#define SHIP_INVINCIBLE 1.5
 #define MAX_SPEED 300
 #define ACCEL_CONST 10
 #define SHIP_ROTATION_SPEED 0.1
@@ -15,8 +15,8 @@ typedef struct Ship {
     Vector velocity;
     // The angle the ship is pointing in radians
     float angle;
-    // How many frames the ship is invincible for
-    char invincible;
+    // How long is the ship invincible for
+    float invincible;
 } Ship;
 
 // Creates a new ship with the given position and velocity
