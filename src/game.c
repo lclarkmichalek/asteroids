@@ -12,7 +12,6 @@
 #include "./bullets.h"
 #include "./ship.h"
 #include "./vector.h"
-#include "./drawing.h"
 
 #include "./game.h"
 
@@ -61,19 +60,16 @@ void spawn_asteroid(Game *g) {
         float mag = 70 * normal_rand() + 30;
         Vector v = {
             mag * cos(i * delta),
-            mag * sin(i * delta),
-            0
+            mag * sin(i * delta)
         };
         verts[i] = v;
     }
 
     Vector pos = {drand48() * g->size.x,
-                  drand48() * g->size.y,
-                  0
+                  drand48() * g->size.y
                  };
     Vector dir = {drand48() * 10,
-                  drand48() * 10,
-                  0
+                  drand48() * 10
                  };
     bound_asteroid_speeds(&dir);
 
@@ -126,7 +122,7 @@ void handle_key_event(Game *game, int keycode) {
 }
 
 void emit_asteroid_hit_particles(ParticleManager *pm, Vector center) {
-    Vector unit = {0, 1, 0};
+    Vector unit = {0, 1};
     char n;
     for (n = 0; n < ASTEROID_PARTICLEN; n++) {
         float angle = (float)drand48() * 2 * 3.142;

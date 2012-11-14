@@ -9,7 +9,6 @@
 
 #include "./asteroid.h"
 #include "./vector.h"
-#include "./drawing.h"
 
 Asteroid new_asteroid(Vector pos, Vector verts[VERTEXN], Vector dir) {
     Asteroid a;

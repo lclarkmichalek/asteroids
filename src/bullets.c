@@ -30,8 +30,7 @@ void shoot_bullet(BulletManager* bm, Ship ship) {
     bm->last_shot = bm->pm.current_frame;
     Vector velocity = {
         -sin(-ship.angle) * BULLET_SPEED,
-        -cos(-ship.angle) * BULLET_SPEED,
-        0
+        -cos(-ship.angle) * BULLET_SPEED
     };
     add_particle(&bm->pm, ship.position, velocity, BULLET_LIFETIME);
 }

@@ -6,7 +6,7 @@
 typedef unsigned int uint;
 
 typedef struct Vector {
-    float x, y, z;
+    float x, y;
 } Vector;
 
 // Creates a new vector
@@ -19,8 +19,6 @@ Vector vec_sub(Vector, Vector);
 Vector vec_mul(Vector, float);
 // Calculates the magnitude squared
 uint magnitude_squared(Vector);
-// Calculate the cross product
-Vector cross_product(Vector, Vector);
 // Calculate the dot product
 int dot_product(Vector, Vector);
 // mod over the vector
