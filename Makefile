@@ -22,8 +22,7 @@ format:
 	astyle --style=java $(HEADERS) $(SOURCES)
 
 clean:
-	rm ./asteroids
-	rm src/*.o
+	rm -f src/*.o src/*.orig ./asteroids ./asteroids.zip
 
 tags:
 	ctags -o TAGS -e $(HEADERS) $(SOURCES)
@@ -31,3 +30,11 @@ tags:
 test: $(OBJECTS)
 	$(CC) -shared -Wl,-soname,lib$(EXECUTABLE).so -o lib$(EXECUTABLE).so $(OBJECTS) $(LDFLAGS)
 	nosetests3
+
+asteroids.zip: $(SOURCES)
+	rm -rf asteroids
+	mkdir asteroids
+	git clone . asteroids
+	rm asteroids/.git -rf
+	zip -r asteroids.zip asteroids
+	rm -rf asteroids
