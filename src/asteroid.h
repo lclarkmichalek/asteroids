@@ -9,7 +9,7 @@
 #define MUTATIONN 2
 #define ASTEROID_ROTATION_SPEED 1.2
 #define ASTEROID_COLOR al_map_rgb(255, 255, 255)
-#define ASTEROID_INVINCIBLE 30
+#define ASTEROID_INVINCIBLE 0.5
 #define ASTEROID_SPEED 60
 #define MAX_GENERATION 3
 #define ASTEROID_SIZE_DECAY 0.7
@@ -23,13 +23,13 @@ typedef struct Asteroid {
     // The largest distance from the center to a vertex
     uint radius_squared;
 
-    // The direction that the Asteroid is travelling per frame
+    // The direction that the Asteroid is travelling per second
     Vector direction;
     // The angle of the Asteroid in radians
     float angle;
 
-    // How many frames the asteroid is invincible for
-    char invincible;
+    // How long the asteroid is invincible for
+  float invincible;
 
     // The "generation" of asteroid this is
     char generation;

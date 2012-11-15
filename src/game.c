@@ -147,7 +147,7 @@ void update_game(Game *game, float dt) {
         puts("Inconsistent");
 
     AsteroidNode* hit = bullet_hit(game->bulletmanager, game->asteroids);
-    if (hit != NULL && !hit->value->invincible) {
+    if (hit != NULL && hit->value->invincible <= 0) {
         emit_collision_particles(game->particlemanager, hit->value->center);
         split_asteroid(&game->asteroids, hit);
         game->score += ASTEROID_SCORE;
@@ -166,7 +166,8 @@ void update_ship(Game* game, float dt) {
         game->ship.invincible -= dt;
     } else {
         if (point_collides(game->asteroids, game->ship.position) != NULL) {
-            emit_collision_particles(game->particlemanager, game->ship.position);
+            emit_collision_particles(game->particlemanager,
+                                     game->ship.position);
             game->lives--;
             game->ship.invincible = SHIP_INVINCIBLE;
             game->ship.position = vec_mul(game->size, 0.5);
