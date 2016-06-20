@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <time.h>
 
+#define ALLEGRO_NO_MAGIC_MAIN
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_ttf.h>
@@ -12,7 +13,7 @@
 
 ALLEGRO_KEYBOARD_STATE *keys;
 
-int main() {
+int real_main() {
     srand48(time(NULL));
 
     if (!al_init()) {
@@ -120,4 +121,8 @@ int main() {
     free(genericevent);
     delete_game(game);
     return 0;
+}
+
+int main(int argc, char **argv) {
+  return al_run_main(argc, argv, real_main);
 }
