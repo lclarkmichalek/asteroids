@@ -20,10 +20,17 @@ int real_main() {
         puts("Could not initialise allegro");
         return 1;
     }
+
     if (!al_install_keyboard()) {
         puts("Could not initialise allegro keyboard subsystem");
         return 1;
     }
+
+	if (!al_init_primitives_addon()) {
+		puts("Could not initialise allegro primitives addon");
+		return 1;
+	}
+
     keys = malloc(sizeof(ALLEGRO_KEYBOARD_STATE));
     if (!init_font()) {
         puts("Could not initialise allegro font subsystem");
