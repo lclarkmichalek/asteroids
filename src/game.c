@@ -321,7 +321,7 @@ void draw_hud(Game *game) {
             snprintf(buffer, sizeof(buffer), "Life lost! %d remaining",
                      game->lives);
 		else {
-			#ifdef _MSC_VER
+			#ifdef ALLEGRO_MSVC
 				strcpy_s(buffer, 39, "Life lost! No further respawns allowed");
 			#else
 				strcpy(buffer, "Life lost! No further respawns allowed");
