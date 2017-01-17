@@ -47,7 +47,7 @@ void delete_game(Game *g) {
 }
 
 float normal_rand() {
-    float v = drand48();
+    float v = DRAND48();
     return -(2*v - 1) * (2*v - 1) + 1;
 }
 
@@ -65,17 +65,17 @@ void spawn_asteroid(Game *g) {
         verts[i] = v;
     }
 
-    Vector pos = {drand48() * g->size.x,
-                  drand48() * g->size.y
+    Vector pos = {DRAND48() * g->size.x,
+                  DRAND48() * g->size.y
                  };
-    Vector dir = {drand48() * ASTEROID_SPEED * 2 - ASTEROID_SPEED,
-                  drand48() * ASTEROID_SPEED * 2 - ASTEROID_SPEED
+    Vector dir = {DRAND48() * ASTEROID_SPEED * 2 - ASTEROID_SPEED,
+                  DRAND48() * ASTEROID_SPEED * 2 - ASTEROID_SPEED
                  };
     bound_asteroid_speeds(&dir);
 
     Asteroid *a = malloc(sizeof(Asteroid));
     *a = new_asteroid(pos, verts, dir);
-    a->angle = drand48() * 2 * 3.142;
+    a->angle = DRAND48() * 2 * 3.142;
     AsteroidNode *n = malloc(sizeof(AsteroidNode));
     n->value = a;
 
@@ -125,10 +125,10 @@ void emit_collision_particles(ParticleManager *pm, Vector center) {
     Vector unit = {0, 1};
     char n;
     for (n = 0; n < ASTEROID_PARTICLEN; n++) {
-        float angle = (float)drand48() * 2 * 3.142;
-        float mag = (float)drand48() * 100;
+        float angle = (float)DRAND48() * 2 * 3.142;
+        float mag = (float)DRAND48() * 100;
         Vector direction = vec_mul(rotate(unit, angle), mag);
-        float lifetime = (float)drand48() * 0.5 + 0.5;
+        float lifetime = (float)DRAND48() * 0.5 + 0.5;
         add_particle(pm,
                      center, direction, lifetime);
     }
@@ -320,8 +320,13 @@ void draw_hud(Game *game) {
         if (game->lives != 0)
             snprintf(buffer, sizeof(buffer), "Life lost! %d remaining",
                      game->lives);
-        else
-            strcpy(buffer, "Life lost! No further respawns allowed");
+		else {
+			#ifdef _MSC_VER
+				strcpy_s(buffer, 39, "Life lost! No further respawns allowed");
+			#else
+				strcpy(buffer, "Life lost! No further respawns allowed");
+			#endif // _MSC_VER
+		}
 
         al_draw_text(ttf_font, HUD_COLOR, game->size.x / 2, 60,
                      ALLEGRO_ALIGN_CENTRE, buffer);

@@ -8,13 +8,14 @@
 #include <allegro5/allegro_ttf.h>
 
 #include "./game.h"
+#include "./main.h"
 
 #define FPS 60
 
 ALLEGRO_KEYBOARD_STATE *keys;
 
-int real_main() {
-    srand48(time(NULL));
+int real_main(int argc, char **argv) {
+	SRAND48();
 
     if (!al_init()) {
         puts("Could not initialise allegro");
