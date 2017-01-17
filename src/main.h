@@ -9,6 +9,6 @@
 	#else // OSX, Linux
 		#define SRAND48() srand48(time(NULL))
 		#define DRAND48() drand48()
-	#endif // ALLEGRO_MSVC
+	#endif // ALLEGRO_WINDOWS
 
 #endif // _MAIN_H

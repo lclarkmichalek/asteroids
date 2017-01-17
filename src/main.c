@@ -15,6 +15,11 @@
 ALLEGRO_KEYBOARD_STATE *keys;
 
 int real_main(int argc, char **argv) {
+
+	/* handling unused parameters without warnings from any compiler */
+	(void)argc;
+	(void)argv;
+
 	SRAND48();
 
     if (!al_init()) {
