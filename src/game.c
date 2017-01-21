@@ -149,8 +149,8 @@ void update_game(Game *game, float dt) {
     AsteroidNode* hit = bullet_hit(game->bulletmanager, game->asteroids);
     if (hit != NULL && hit->value->invincible <= 0) {
         emit_collision_particles(game->particlemanager, hit->value->center);
-        split_asteroid(&game->asteroids, hit);
         game->score += ASTEROID_SCORE / (hit->value->generation + 1);
+        split_asteroid(&game->asteroids, hit);
     }
 
     update_ship(game, dt);
