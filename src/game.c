@@ -320,13 +320,13 @@ void draw_hud(Game *game) {
         if (game->lives != 0)
             snprintf(buffer, sizeof(buffer), "Life lost! %d remaining",
                      game->lives);
-		else {
-			#ifdef ALLEGRO_MSVC
-				strcpy_s(buffer, 39, "Life lost! No further respawns allowed");
-			#else
-				strcpy(buffer, "Life lost! No further respawns allowed");
-			#endif // _MSC_VER
-		}
+        else {
+            #ifdef ALLEGRO_MSVC
+                strcpy_s(buffer, 39, "Life lost! No further respawns allowed");
+            #else
+                strcpy(buffer, "Life lost! No further respawns allowed");
+            #endif // _MSC_VER
+        }
 
         al_draw_text(ttf_font, HUD_COLOR, game->size.x / 2, 60,
                      ALLEGRO_ALIGN_CENTRE, buffer);

@@ -16,11 +16,11 @@ ALLEGRO_KEYBOARD_STATE *keys;
 
 int real_main(int argc, char **argv) {
 
-	/* handling unused parameters without warnings from any compiler */
-	(void)argc;
-	(void)argv;
+    /* handling unused parameters without warnings from any compiler */
+    (void)argc;
+    (void)argv;
 
-	SRAND48();
+    SRAND48();
 
     if (!al_init()) {
         puts("Could not initialise allegro");
@@ -32,10 +32,10 @@ int real_main(int argc, char **argv) {
         return 1;
     }
 
-	if (!al_init_primitives_addon()) {
-		puts("Could not initialise allegro primitives addon");
-		return 1;
-	}
+    if (!al_init_primitives_addon()) {
+        puts("Could not initialise allegro primitives addon");
+        return 1;
+    }
 
     keys = malloc(sizeof(ALLEGRO_KEYBOARD_STATE));
     if (!init_font()) {
