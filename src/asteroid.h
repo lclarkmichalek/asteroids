@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "./vector.h"
+#include "./main.h"
 
 #define VERTEXN 12
 #define MUTATIONN 2

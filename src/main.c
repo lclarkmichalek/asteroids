@@ -8,22 +8,35 @@
 #include <allegro5/allegro_ttf.h>
 
 #include "./game.h"
+#include "./main.h"
 
 #define FPS 60
 
 ALLEGRO_KEYBOARD_STATE *keys;
 
-int real_main() {
-    srand48(time(NULL));
+int real_main(int argc, char **argv) {
+
+    /* handling unused parameters without warnings from any compiler */
+    (void)argc;
+    (void)argv;
+
+    SRAND48();
 
     if (!al_init()) {
         puts("Could not initialise allegro");
         return 1;
     }
+
     if (!al_install_keyboard()) {
         puts("Could not initialise allegro keyboard subsystem");
         return 1;
     }
+
+    if (!al_init_primitives_addon()) {
+        puts("Could not initialise allegro primitives addon");
+        return 1;
+    }
+
     keys = malloc(sizeof(ALLEGRO_KEYBOARD_STATE));
     if (!init_font()) {
         puts("Could not initialise allegro font subsystem");
